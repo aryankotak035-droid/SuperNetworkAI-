@@ -9,6 +9,7 @@ import { ArrowLeft, Edit2, Save, X, Sparkles, Briefcase, Target, Zap, AlertCircl
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
 import ProfileCompleteness from "../components/ProfileCompleteness";
+import ProfileImageUpload from "../components/ProfileImageUpload";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
