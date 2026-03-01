@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 
 class SuperNetworkAPITester:
-    def __init__(self, base_url="https://intent-network-1.preview.emergentagent.com"):
+    def __init__(self, base_url="https://ikigai-match.preview.emergentagent.com"):
         self.base_url = base_url
         self.session_token = None
         self.tests_run = 0
