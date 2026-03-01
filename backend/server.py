@@ -689,7 +689,7 @@ async def search_profiles(request: SearchRequest, user: User = Depends(get_curre
         # Stage 1: pgvector cosine similarity search (top 15)
         if request.role_filter:
             profiles = await conn.fetch(
-                """SELECT p.profile_id, p.user_id, p.full_name, p.role_intent, p.skills, p.portfolio_url, p.visibility_public, p.created_at, p.updated_at,
+                """SELECT p.profile_id, p.user_id, p.full_name, p.role_intent, p.skills, p.portfolio_url, p.visibility_public, p.profile_image, p.created_at, p.updated_at,
                           i.passion, i.skillset, i.mission, i.working_style_availability,
                           1 - (p.profile_embedding <=> $1) AS similarity
                    FROM profiles p
@@ -701,7 +701,7 @@ async def search_profiles(request: SearchRequest, user: User = Depends(get_curre
             )
         else:
             profiles = await conn.fetch(
-                """SELECT p.profile_id, p.user_id, p.full_name, p.role_intent, p.skills, p.portfolio_url, p.visibility_public, p.created_at, p.updated_at,
+                """SELECT p.profile_id, p.user_id, p.full_name, p.role_intent, p.skills, p.portfolio_url, p.visibility_public, p.profile_image, p.created_at, p.updated_at,
                           i.passion, i.skillset, i.mission, i.working_style_availability,
                           1 - (p.profile_embedding <=> $1) AS similarity
                    FROM profiles p
