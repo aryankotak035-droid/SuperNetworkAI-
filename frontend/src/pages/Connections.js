@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { ArrowLeft, Check, X, Clock, UserCircle2 } from "lucide-react";
+import { ArrowLeft, Check, X, Clock, UserCircle2, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -229,6 +229,14 @@ const Connections = () => {
                         <Check className="w-5 h-5" />
                         <span className="text-sm font-semibold">Connected</span>
                       </div>
+                      <Button
+                        onClick={() => navigate(`/messages/${conn.other_profile?.profile_id}`)}
+                        size="sm"
+                        className="btn-primary gap-2"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Message
+                      </Button>
                     </div>
                   </div>
                 ))
