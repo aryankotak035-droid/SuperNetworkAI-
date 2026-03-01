@@ -661,6 +661,24 @@ async def search_profiles(request: SearchRequest, user: User = Depends(get_curre
     
     pool = await get_db_pool()
     async with pool.acquire() as conn:
+        # Save search to history (keep only last 10)
+        await conn.execute(
+            """INSERT INTO search_history (user_id, query, role_filter)
+               VALUES ($1, $2, $3)""",
+            user.user_id, request.query, request.role_filter
+        )
+        # Delete old history entries (keep last 10)
+        await conn.execute(
+            """DELETE FROM search_history
+               WHERE user_id = $1 AND id NOT IN (
+                   SELECT id FROM search_history
+                   WHERE user_id = $1
+                   ORDER BY created_at DESC
+                   LIMIT 10
+               )""",
+            user.user_id
+        )
+        
         # Get current user's profile to exclude from results
         user_profile = await conn.fetchrow(
             "SELECT profile_id FROM profiles WHERE user_id = $1",
