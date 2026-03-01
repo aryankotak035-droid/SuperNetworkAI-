@@ -485,9 +485,8 @@ async def get_my_connections(user: User = Depends(get_current_user)):
     return connections
 
 @api_router.put("/connections/{connection_id}/respond")
-async def respond_to_connection(connection_id: str, response_data: ConnectionResponse):
+async def respond_to_connection(connection_id: str, response_data: ConnectionResponse, user: User = Depends(get_current_user)):
     """Accept or reject connection request"""
-    user = await get_current_user()
     profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
     
     connection = await db.connections.find_one({"connection_id": connection_id}, {"_id": 0})
