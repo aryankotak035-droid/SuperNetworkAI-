@@ -264,7 +264,33 @@ const Dashboard = () => {
                 placeholder="Search for co-founders, developers, designers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-6 text-lg rounded-2xl glass-card"
+                onFocus={() => setShowHistory(true)}
+                className="pl-12 pr-14 py-6 text-lg rounded-2xl glass-card"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
+                onClick={() => setShowHistory(!showHistory)}
+                data-testid="history-toggle-button"
+              >
+                <History className="w-5 h-5 text-muted-foreground" />
+              </Button>
+              <SearchHistory
+                isOpen={showHistory}
+                onClose={() => setShowHistory(false)}
+                onSelectSearch={(query, roleFilter) => {
+                  setSearchQuery(query);
+                  if (roleFilter) {
+                    setSelectedRoles([roleFilter]);
+                  }
+                  setShowHistory(false);
+                  // Trigger search after a short delay
+                  setTimeout(() => {
+                    navigate(`/search?q=${encodeURIComponent(query)}${roleFilter ? `&role=${roleFilter}` : ''}`);
+                  }, 100);
+                }}
               />
             </form>
 
