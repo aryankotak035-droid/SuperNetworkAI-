@@ -23,7 +23,7 @@ const SearchResults = () => {
     } else {
       navigate('/dashboard');
     }
-  }, [query]);
+  }, [query, roleFilter]);
 
   const performSearch = async () => {
     setLoading(true);
