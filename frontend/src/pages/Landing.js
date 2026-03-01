@@ -16,31 +16,38 @@ const Landing = () => {
   const steps = [
     {
       number: "01",
-      title: "Sign In & Build Your Ikigai",
-      description: "Connect with Google and chat with our AI to define your passions, skills, mission, and working style.",
+      title: "Sign Up with Google",
+      description: "Create your account instantly with Google OAuth. No forms, no passwords - just one click to get started.",
       icon: <MessageSquare className="w-6 h-6" />,
       color: "from-blue-500 to-blue-600"
     },
     {
       number: "02",
-      title: "Search with Natural Language",
-      description: "Describe exactly who you're looking for. Our AI understands intent, not just keywords.",
-      icon: <Search className="w-6 h-6" />,
+      title: "Build Your Ikigai Profile",
+      description: "Chat with our AI to define your passions, skills, mission, and working style through an interactive conversation.",
+      icon: <MessageSquare className="w-6 h-6" />,
       color: "from-purple-500 to-purple-600"
     },
     {
       number: "03",
-      title: "Get AI-Ranked Matches",
-      description: "Receive top matches with AI-generated explanations showing why each person is a great fit.",
-      icon: <Sparkles className="w-6 h-6" />,
+      title: "Search with Natural Language",
+      description: "Describe exactly who you're looking for. Our AI understands intent, not just keywords.",
+      icon: <Search className="w-6 h-6" />,
       color: "from-emerald-500 to-emerald-600"
     },
     {
       number: "04",
-      title: "Connect & Collaborate",
-      description: "Send connection requests and start building meaningful professional relationships.",
-      icon: <UserPlus className="w-6 h-6" />,
+      title: "Get AI-Ranked Matches",
+      description: "Receive top matches with AI-generated explanations showing why each person is a great fit.",
+      icon: <Sparkles className="w-6 h-6" />,
       color: "from-pink-500 to-pink-600"
+    },
+    {
+      number: "05",
+      title: "Connect & Message",
+      description: "Send connection requests and start real-time conversations with your perfect matches.",
+      icon: <UserPlus className="w-6 h-6" />,
+      color: "from-orange-500 to-orange-600"
     }
   ];
 
