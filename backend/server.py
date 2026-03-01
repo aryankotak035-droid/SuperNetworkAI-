@@ -128,17 +128,17 @@ async def get_current_user(session_token: Optional[str] = Cookie(None), authoriz
 
 # Auth endpoints
 @api_router.post("/auth/session")
-async def create_session(x_session_id: str = Header(..., alias="X-Session-ID")):
+async def create_session(response: Response, x_session_id: str = Header(..., alias="X-Session-ID")):
     """Exchange session_id for user data and create session"""
     async with httpx.AsyncClient() as client:
-        response = await client.get(
+        resp = await client.get(
             "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
             headers={"X-Session-ID": x_session_id}
         )
-        if response.status_code != 200:
+        if resp.status_code != 200:
             raise HTTPException(status_code=400, detail="Invalid session_id")
         
-        data = response.json()
+        data = resp.json()
     
     # Check if user exists
     user_doc = await db.users.find_one({"email": data["email"]}, {"_id": 0})
@@ -166,6 +166,17 @@ async def create_session(x_session_id: str = Header(..., alias="X-Session-ID")):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.user_sessions.insert_one(session)
+    
+    # Set HTTP-only cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        max_age=7 * 24 * 60 * 60,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/"
+    )
     
     # Check if profile exists
     profile_doc = await db.profiles.find_one({"user_id": user_id}, {"_id": 0})
