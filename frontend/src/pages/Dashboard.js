@@ -4,11 +4,12 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, UserPlus, MessageCircle, X, Filter, SlidersHorizontal } from "lucide-react";
+import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, UserPlus, MessageCircle, X, Filter, SlidersHorizontal, History } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { ProfileCardSkeleton, SearchBarSkeleton } from "../components/SkeletonLoaders";
 import ProfileCompleteness from "../components/ProfileCompleteness";
+import SearchHistory from "../components/SearchHistory";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -20,6 +21,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   
   // Advanced filters
   const [showFilters, setShowFilters] = useState(false);
