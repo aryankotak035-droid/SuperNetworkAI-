@@ -1131,6 +1131,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
 
 app.include_router(api_router)
 
+# Mount static files for profile images
+app.mount("/api/uploads", StaticFiles(directory=str(ROOT_DIR / 'uploads')), name="uploads")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
