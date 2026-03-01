@@ -301,9 +301,8 @@ async def get_my_profile(user: User = Depends(get_current_user)):
     return profile_doc
 
 @api_router.put("/profile/visibility")
-async def update_visibility(visibility_public: bool):
+async def update_visibility(visibility_public: bool, user: User = Depends(get_current_user)):
     """Toggle profile visibility"""
-    user = await get_current_user()
     result = await db.profiles.update_one(
         {"user_id": user.user_id},
         {"$set": {"visibility_public": visibility_public}}
