@@ -313,9 +313,8 @@ async def update_visibility(visibility_public: bool, user: User = Depends(get_cu
 
 # Search endpoint
 @api_router.post("/search")
-async def search_profiles(request: SearchRequest):
+async def search_profiles(request: SearchRequest, user: User = Depends(get_current_user)):
     """Two-stage semantic search with LLM re-ranking"""
-    user = await get_current_user()
     
     # Generate query embedding
     embedding_response = openai_client.embeddings.create(
