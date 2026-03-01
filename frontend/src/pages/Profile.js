@@ -8,6 +8,7 @@ import { Textarea } from "../components/ui/textarea";
 import { ArrowLeft, Edit2, Save, X, Sparkles, Briefcase, Target, Zap, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
+import ProfileCompleteness from "../components/ProfileCompleteness";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
