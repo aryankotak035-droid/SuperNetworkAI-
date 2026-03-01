@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, UserPlus } from "lucide-react";
+import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, UserPlus, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
 
@@ -152,6 +152,15 @@ const Dashboard = () => {
             <h1 className="text-xl font-bold\">SuperNetworkAI</h1>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              data-testid="messages-button"
+              variant="ghost"
+              onClick={() => navigate('/messages')}
+              className="rounded-full gap-2"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Messages
+            </Button>
             <Button
               data-testid="profile-button"
               variant="ghost"
