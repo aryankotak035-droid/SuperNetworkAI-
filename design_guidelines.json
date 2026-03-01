@@ -1,0 +1,154 @@
+{
+  "brand_identity": {
+    "name": "SuperNetworkAI",
+    "ethos": "The Ethereal Nexus - Where Human Purpose Meets AI Precision",
+    "archetype": "The Architect (Structure + Vision)",
+    "tone": "Professional, Intelligent, empathetic, Forward-looking",
+    "theme_strategy": "dark_mode_preferred"
+  },
+  "typography": {
+    "primary_font": {
+      "name": "Outfit",
+      "type": "Sans-Serif",
+      "usage": "Headings, Hero Text, Brand Elements",
+      "weights": ["400", "500", "700"],
+      "import_url": "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap"
+    },
+    "secondary_font": {
+      "name": "Manrope",
+      "type": "Sans-Serif",
+      "usage": "Body Text, UI Elements, Data Display",
+      "weights": ["400", "500", "600"],
+      "import_url": "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap"
+    },
+    "accent_font": {
+      "name": "JetBrains Mono",
+      "type": "Monospace",
+      "usage": "AI Match Explanations, Code Snippets, Data Tags",
+      "weights": ["400"],
+      "import_url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
+    }
+  },
+  "colors": {
+    "background": {
+      "default": "#09090B",
+      "surface": "#18181B",
+      "surface_highlight": "#27272A",
+      "overlay": "rgba(9, 9, 11, 0.8)"
+    },
+    "text": {
+      "primary": "#FAFAFA",
+      "secondary": "#A1A1AA",
+      "muted": "#52525B",
+      "accent": "#60A5FA"
+    },
+    "brand": {
+      "primary": "#3B82F6",
+      "primary_hover": "#2563EB",
+      "secondary": "#10B981",
+      "accent_glow": "0 0 20px rgba(59, 130, 246, 0.5)"
+    },
+    "status": {
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444",
+      "info": "#3B82F6"
+    },
+    "gradients": {
+      "hero_text": "linear-gradient(to right, #FAFAFA, #60A5FA)",
+      "card_border": "linear-gradient(45deg, rgba(255,255,255,0.1), rgba(96,165,250,0.5), rgba(255,255,255,0.1))",
+      "ikigai_core": "radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(9,9,11,0) 70%)"
+    }
+  },
+  "layout_strategies": {
+    "landing_page": {
+      "type": "bento_grid",
+      "hero_section": "Centered content with 'Bento' grid of floating profile cards behind or around the main text.",
+      "features_section": "Zig-zag layout with large typography and glassmorphic illustrations."
+    },
+    "dashboard": {
+      "type": "high_density_grid",
+      "structure": "Sidebar navigation (collapsible), Top bar for search/global actions, Main content area with widget grid.",
+      "card_style": "Flat surface with 1px border (#27272A) and subtle hover lift."
+    },
+    "search_results": {
+      "type": "masonry_or_grid",
+      "card_display": "Rich profile cards with 'Match Explanation' highlighted. Use Masonry for varied content height if bios differ significantly, otherwise strict Grid."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 py-2 shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all hover:shadow-[0_0_25px_rgba(59,130,246,0.6)]",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full px-6 py-2",
+      "ghost": "hover:bg-accent hover:text-accent-foreground rounded-full px-4 py-2",
+      "outline": "border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-full px-6 py-2"
+    },
+    "inputs": {
+      "search_bar": "bg-surface/50 border-surface_highlight rounded-xl px-4 py-3 text-lg focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground backdrop-blur-md",
+      "form_field": "bg-transparent border-b border-border focus:border-primary px-0 py-2 rounded-none transition-colors"
+    },
+    "cards": {
+      "match_card": "group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-white/10",
+      "profile_card": "rounded-xl border border-border bg-card text-card-foreground shadow-sm"
+    },
+    "visual_enhancers": {
+      "glassmorphism": "backdrop-blur-xl bg-white/5 border border-white/10",
+      "match_highlight": "font-mono text-sm text-green-400 bg-green-400/10 px-2 py-1 rounded-md border border-green-400/20",
+      "ai_explanation_box": "mt-4 p-4 rounded-lg bg-black/40 border border-primary/20 font-mono text-sm text-gray-300 relative before:content-['AI_INSIGHT'] before:absolute before:-top-3 before:left-3 before:bg-background before:px-2 before:text-[10px] before:text-primary"
+    }
+  },
+  "visual_assets": {
+    "icons_library": "lucide-react",
+    "image_urls": {
+      "hero_background": "https://images.pexels.com/photos/1765192133311/pexels-photo-1765192133311.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "community_grid": [
+        "https://images.pexels.com/photos/34520968/pexels-photo-34520968.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/9489396/pexels-photo-9489396.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "placeholders": {
+        "user_avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=",
+        "cover_image": "https://images.unsplash.com/photo-1549805932-a2cc5b7d6653?auto=format&fit=crop&w=800&q=80"
+      }
+    }
+  },
+  "animation_guidelines": {
+    "page_transition": "initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}",
+    "stagger_children": "variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }}",
+    "hover_lift": "whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}"
+  },
+  "accessibility": {
+    "contrast_check": "Ensure text-gray-400 is readable on dark bg. Use text-gray-300 if needed.",
+    "focus_states": "Visible focus ring required: ring-2 ring-primary ring-offset-2 ring-offset-background",
+    "reduced_motion": "Respect prefers-reduced-motion media query."
+  },
+  "instructions_to_main_agent": [
+    "Install 'framer-motion' for animations if not present.",
+    "Install 'lucide-react' for icons.",
+    "Use the provided Google Fonts URLs in index.css.",
+    "Implement the 'Match Explanation' box exactly as described in 'visual_enhancers'.",
+    "For the Ikigai chart, use CSS overlapping circles or a simple SVG implementation.",
+    "Ensure the dashboard feels 'dense' but 'breathing' - use the high density grid rules.",
+    "Use the placeholder avatar API (DiceBear) for user profiles without images: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`"
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: `transition: all`. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add `.App { text-align: center; }` in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Create new components that match the style and conventions of existing components when needed",
+    "Examine existing components to understand the project's component patterns before creating new ones",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use `sonner` for toasts. Sonner component are located in `/app/src/components/ui/sonner.tsx`"
+  ]
+}
