@@ -8,6 +8,7 @@ import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, 
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { ProfileCardSkeleton, SearchBarSkeleton } from "../components/SkeletonLoaders";
+import ProfileCompleteness from "../components/ProfileCompleteness";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
