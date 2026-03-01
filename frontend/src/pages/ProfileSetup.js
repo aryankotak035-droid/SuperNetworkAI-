@@ -113,38 +113,44 @@ const ProfileSetup = () => {
           </div>
 
           {/* CV Upload Section */}
-          <div className="mb-10 p-6 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-            <div className="flex items-center gap-2 mb-4">
-              <Upload className="w-5 h-5 text-primary" />
-              <Label className="text-lg font-outfit font-semibold text-white">Paste Your CV</Label>
+          <div className="mb-10 p-8 rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <Upload className="w-5 h-5 text-white" />
+              </div>
+              <Label className="text-xl font-bold text-white">Paste Your Profile Text</Label>
             </div>
+            <p className="text-sm text-gray-400 mb-4 pl-13">
+              📝 Copy and paste the <span className="text-white font-semibold">text content</span> from your CV, resume, or LinkedIn profile.<br/>
+              ⚠️ <span className="text-yellow-400">Note:</span> Please paste the actual text, not just the URL.
+            </p>
             <Textarea
               data-testid="cv-textarea"
-              placeholder="Paste your CV text, LinkedIn profile, or portfolio description here..."
+              placeholder="Paste your profile text here... (e.g., from your CV, resume, or copy the text from your LinkedIn 'About' and 'Experience' sections)"
               value={cvText}
               onChange={(e) => setCvText(e.target.value)}
-              className="min-h-[180px] bg-black/30 border-white/10 text-white placeholder:text-gray-500 mb-4 rounded-xl"
+              className="min-h-[220px] bg-black/40 border-white/10 text-white placeholder:text-gray-500 mb-5 rounded-2xl resize-none focus:border-blue-500/50 smooth-transition"
             />
             <Button
               data-testid="extract-ikigai-button"
               onClick={handleExtractIkigai}
               disabled={extracting || !cvText.trim()}
-              className="rounded-full bg-primary hover:bg-primary/90 w-full hover:scale-105 transition-all shadow-lg shadow-primary/20"
+              className="btn-premium text-white font-semibold w-full rounded-2xl py-6 smooth-transition hover:scale-[1.02]"
             >
               {extracting ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  AI is extracting...
+                  AI is extracting your Ikigai...
                 </>
               ) : extracted ? (
                 <>
                   <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Extracted! Edit below
+                  Extracted! Review & edit below
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Extract with AI
+                  Extract Ikigai with AI
                 </>
               )}
             </Button>
