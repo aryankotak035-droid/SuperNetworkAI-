@@ -15,69 +15,16 @@ SuperNetworkAI is an AI-powered, intent-based matchmaking web app for founders, 
 ## Tech Stack
 - **Frontend:** React, Tailwind CSS, Framer Motion, Shadcn/UI
 - **Backend:** FastAPI (Python)
-- **Database:** PostgreSQL with pgvector extension (migrated from MongoDB)
+- **Database:** PostgreSQL with pgvector extension
 - **AI:** OpenAI API (gpt-4o-mini for generation, text-embedding-3-small for embeddings)
 - **Authentication:** Emergent-managed Google OAuth
-
-## Database Schema
-```sql
--- Users table
-CREATE TABLE users (
-    user_id VARCHAR(50) PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    picture TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Profiles table with pgvector embedding
-CREATE TABLE profiles (
-    profile_id VARCHAR(50) PRIMARY KEY,
-    user_id VARCHAR(50) UNIQUE REFERENCES users(user_id),
-    full_name VARCHAR(255) NOT NULL,
-    role_intent VARCHAR(20) CHECK (role_intent IN ('COFOUNDER', 'TEAMMATE', 'CLIENT')),
-    skills TEXT[],
-    portfolio_url TEXT,
-    visibility_public BOOLEAN DEFAULT TRUE,
-    profile_embedding vector(1536),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Ikigai table
-CREATE TABLE ikigai (
-    ikigai_id VARCHAR(50) PRIMARY KEY,
-    profile_id VARCHAR(50) UNIQUE REFERENCES profiles(profile_id),
-    passion TEXT NOT NULL,
-    skillset TEXT NOT NULL,
-    mission TEXT NOT NULL,
-    working_style_availability TEXT NOT NULL
-);
-
--- Connections table
-CREATE TABLE connections (
-    connection_id VARCHAR(50) PRIMARY KEY,
-    sender_id VARCHAR(50) REFERENCES profiles(profile_id),
-    receiver_id VARCHAR(50) REFERENCES profiles(profile_id),
-    status VARCHAR(20) CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Messages table
-CREATE TABLE messages (
-    message_id VARCHAR(50) PRIMARY KEY,
-    sender_id VARCHAR(50) REFERENCES profiles(profile_id),
-    receiver_id VARCHAR(50) REFERENCES profiles(profile_id),
-    content TEXT NOT NULL,
-    read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
 
 ## What's Been Implemented
 
 ### Completed Features ✅
-1. **PostgreSQL + pgvector Migration (Dec 2025)**
+
+#### Core Features (Dec 2025)
+1. **PostgreSQL + pgvector Migration**
    - Migrated from MongoDB to PostgreSQL with pgvector extension
    - Created proper schema with vector similarity index (HNSW)
    - Seeded 10 sample profiles with embeddings
@@ -114,10 +61,39 @@ CREATE TABLE messages (
    - Skills-based filtering
    - Profile completeness indicator in header
 
+#### New Features (Dec 2025 - Latest)
+9. **Profile Image Upload**
+   - Local file storage at /app/backend/uploads/profiles/
+   - Max file size: 5MB
+   - Supported types: JPEG, PNG, WebP, GIF
+   - Image displayed in profile, dashboard cards, and search results
+
+10. **Search History**
+    - Saves last 10 searches per user
+    - Quick access via history toggle button in search bar
+    - Delete individual items or clear all history
+    - Clicking a history item re-runs the search with filters
+
+11. **Theme Persistence**
+    - Enhanced localStorage-based theme storage
+    - System preference detection (prefers-color-scheme)
+    - Smooth animated transition between themes
+
+12. **Interactive Animations**
+    - Added hover-lift and hover-glow effects for cards
+    - Staggered list animations for profile cards
+    - Button bounce feedback on click
+    - Shimmer loading effects
+    - Floating animation for decorative elements
+
 ## API Endpoints
+
+### Authentication
 - `POST /api/auth/session` - Google OAuth callback
 - `GET /api/auth/me` - Get current user
 - `POST /api/auth/logout` - Logout
+
+### Profile
 - `POST /api/profile/extract-ikigai` - AI Ikigai extraction
 - `POST /api/profile/create` - Create profile with embedding
 - `PUT /api/profile/me` - Update profile
@@ -125,52 +101,133 @@ CREATE TABLE messages (
 - `GET /api/profile/completeness` - Get profile completeness score
 - `GET /api/profile/{profile_id}` - Get profile by ID
 - `PUT /api/profile/visibility` - Toggle visibility
+- `POST /api/profile/image` - Upload profile image (NEW)
+- `DELETE /api/profile/image` - Delete profile image (NEW)
+
+### Search
 - `POST /api/search` - Semantic search with filters
+- `GET /api/search/history` - Get search history (NEW)
+- `DELETE /api/search/history/{id}` - Delete single history item (NEW)
+- `DELETE /api/search/history` - Clear all history (NEW)
+
+### Connections
 - `POST /api/connections/request` - Send connection request
 - `GET /api/connections/my` - Get user's connections
 - `PUT /api/connections/{id}/respond` - Accept/reject connection
+
+### Messages
 - `POST /api/messages/send` - Send message
 - `GET /api/messages/conversations` - Get conversations
 - `GET /api/messages/{profile_id}` - Get messages with user
 - `WS /api/ws/{user_id}` - WebSocket for real-time messaging
 
-## Remaining Tasks (Backlog)
+### Static Files
+- `GET /api/uploads/profiles/{filename}` - Serve profile images (NEW)
 
-### P1 - High Priority
-- [ ] Add more comprehensive error handling
-- [ ] Implement email notifications for connection requests
-- [ ] Add profile image upload
+## Database Schema
+
+```sql
+-- Users table
+CREATE TABLE users (
+    user_id VARCHAR(50) PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    picture TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Profiles table with pgvector embedding
+CREATE TABLE profiles (
+    profile_id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) UNIQUE REFERENCES users(user_id),
+    full_name VARCHAR(255) NOT NULL,
+    role_intent VARCHAR(20) CHECK (role_intent IN ('COFOUNDER', 'TEAMMATE', 'CLIENT')),
+    skills TEXT[],
+    portfolio_url TEXT,
+    profile_image TEXT, -- NEW
+    visibility_public BOOLEAN DEFAULT TRUE,
+    profile_embedding vector(1536),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Ikigai table
+CREATE TABLE ikigai (
+    ikigai_id VARCHAR(50) PRIMARY KEY,
+    profile_id VARCHAR(50) UNIQUE REFERENCES profiles(profile_id),
+    passion TEXT NOT NULL,
+    skillset TEXT NOT NULL,
+    mission TEXT NOT NULL,
+    working_style_availability TEXT NOT NULL
+);
+
+-- Search History table (NEW)
+CREATE TABLE search_history (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) REFERENCES users(user_id),
+    query TEXT NOT NULL,
+    role_filter VARCHAR(20),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Connections table
+CREATE TABLE connections (
+    connection_id VARCHAR(50) PRIMARY KEY,
+    sender_id VARCHAR(50) REFERENCES profiles(profile_id),
+    receiver_id VARCHAR(50) REFERENCES profiles(profile_id),
+    status VARCHAR(20) CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED', 'BLOCKED')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Messages table
+CREATE TABLE messages (
+    message_id VARCHAR(50) PRIMARY KEY,
+    sender_id VARCHAR(50) REFERENCES profiles(profile_id),
+    receiver_id VARCHAR(50) REFERENCES profiles(profile_id),
+    content TEXT NOT NULL,
+    read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+## Remaining Tasks (Backlog)
 
 ### P2 - Medium Priority
 - [ ] Block user functionality
-- [ ] Search history and saved searches
 - [ ] Profile analytics (views, match rate)
 
 ### P3 - Nice to Have
-- [ ] Interactive animations and micro-interactions
-- [ ] Dark/light theme persistence improvements
 - [ ] Mobile-responsive refinements
+- [ ] Email notifications for connections
+- [ ] Export profile data
 
 ## File Structure
 ```
 /app
 ├── backend/
-│   ├── .env (DATABASE_URL, OPENAI_API_KEY, EMERGENT_LLM_KEY)
+│   ├── .env
 │   ├── requirements.txt
-│   ├── server.py (Main FastAPI app)
+│   ├── server.py
+│   ├── uploads/
+│   │   └── profiles/  (profile images)
 │   ├── scripts/
-│   │   └── seed_postgres.py (Database seeder)
+│   │   └── seed_postgres.py
 │   └── tests/
-│       └── test_supernetwork_api.py
+│       ├── test_supernetwork_api.py
+│       └── test_new_features.py
 └── frontend/
-    ├── .env (REACT_APP_BACKEND_URL)
+    ├── .env
     ├── package.json
     └── src/
         ├── App.js
+        ├── index.css (enhanced animations)
         ├── components/
         │   ├── ProfileCompleteness.js
+        │   ├── ProfileImageUpload.js (NEW)
+        │   ├── SearchHistory.js (NEW)
         │   ├── SkeletonLoaders.js
-        │   └── ThemeToggle.js
+        │   ├── ThemeToggle.js (ENHANCED)
+        │   └── ui/
         └── pages/
             ├── Landing.js
             ├── AuthCallback.js
@@ -181,3 +238,8 @@ CREATE TABLE messages (
             ├── Connections.js
             └── Messages.js
 ```
+
+## Testing Status
+- Backend: 31/31 tests passing (100%)
+- Frontend: All components verified working
+- Test reports: /app/test_reports/iteration_4.json
