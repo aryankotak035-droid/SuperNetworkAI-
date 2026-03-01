@@ -194,13 +194,9 @@ async def create_session(response: Response, x_session_id: str = Header(..., ali
     }
 
 @api_router.get("/auth/me")
-async def get_me():
+async def get_me(user: User = Depends(get_current_user)):
     """Get current user from session token"""
-    try:
-        user = await get_current_user()
-        return user
-    except:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+    return user
 
 @api_router.post("/auth/logout")
 async def logout(response: Response, session_token: Optional[str] = Cookie(None)):
