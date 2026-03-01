@@ -32,7 +32,7 @@ const SearchResults = () => {
         `${BACKEND_URL}/api/search`,
         {
           query,
-          role_filter: roleFilter || null
+          role_filter: roleFilter && roleFilter !== "ALL" ? roleFilter : null
         },
         { withCredentials: true }
       );
