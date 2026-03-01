@@ -460,9 +460,8 @@ async def send_connection_request(request: ConnectionRequest, user: User = Depen
     return {"connection_id": connection_id, "message": "Connection request sent"}
 
 @api_router.get("/connections/my")
-async def get_my_connections():
+async def get_my_connections(user: User = Depends(get_current_user)):
     """Get user's connections"""
-    user = await get_current_user()
     profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
     
     if not profile:
