@@ -188,6 +188,7 @@ const Dashboard = () => {
             <h1 className="text-xl font-bold">SuperNetworkAI</h1>
           </div>
           <div className="flex items-center gap-3">
+            <ProfileCompleteness compact={true} />
             <Button
               data-testid="messages-button"
               variant="ghost"
