@@ -262,9 +262,10 @@ const Profile = () => {
           className="glass-card rounded-3xl p-8 mb-6"
         >
           <div className="flex items-start gap-6">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-4xl font-bold text-white shadow-lg">
-              {profile.full_name.charAt(0)}
-            </div>
+            <ProfileImageUpload
+              currentImage={profile.profile_image}
+              onImageChange={(newImage) => setProfile({ ...profile, profile_image: newImage })}
+            />
             <div className="flex-1">
               {isEditing ? (
                 <div className="space-y-4">
