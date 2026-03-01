@@ -424,9 +424,8 @@ Return ONLY valid JSON as an array of objects with keys:
 
 # Connection endpoints
 @api_router.post("/connections/request")
-async def send_connection_request(request: ConnectionRequest):
+async def send_connection_request(request: ConnectionRequest, user: User = Depends(get_current_user)):
     """Send connection request"""
-    user = await get_current_user()
     sender_profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
     
     if not sender_profile:
