@@ -107,6 +107,96 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+    
+    /* Enhanced interactive animations */
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .animate-pulse-slow {
+        animation: pulse 3s ease-in-out infinite;
+    }
+    
+    .animate-shimmer {
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+    
+    .hover-lift {
+        @apply transition-all duration-300 ease-out;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px -12px rgba(59, 130, 246, 0.25);
+    }
+    
+    .hover-glow {
+        @apply transition-all duration-300;
+    }
+    
+    .hover-glow:hover {
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-bounce {
+        @apply transition-transform duration-150;
+    }
+    
+    .btn-bounce:active {
+        transform: scale(0.95);
+    }
+    
+    /* Card entrance animations */
+    .card-enter {
+        animation: cardEnter 0.4s ease-out forwards;
+    }
+    
+    /* Staggered list items */
+    .stagger-item {
+        animation: fadeSlideUp 0.4s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .stagger-item:nth-child(1) { animation-delay: 0.05s; }
+    .stagger-item:nth-child(2) { animation-delay: 0.1s; }
+    .stagger-item:nth-child(3) { animation-delay: 0.15s; }
+    .stagger-item:nth-child(4) { animation-delay: 0.2s; }
+    .stagger-item:nth-child(5) { animation-delay: 0.25s; }
+    .stagger-item:nth-child(6) { animation-delay: 0.3s; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes cardEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @layer base {
