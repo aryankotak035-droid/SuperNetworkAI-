@@ -183,7 +183,7 @@ async def create_session(x_session_id: str = Header(..., alias="X-Session-ID")):
     }
 
 @api_router.get("/auth/me")
-async def get_me(current_user: User = None):
+async def get_me():
     """Get current user from session token"""
     try:
         user = await get_current_user()
