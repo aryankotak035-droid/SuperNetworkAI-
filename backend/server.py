@@ -233,9 +233,8 @@ Return ONLY valid JSON with keys: passion, skillset, mission, working_style_avai
         raise HTTPException(status_code=500, detail=f"Failed to extract Ikigai: {str(e)}")
 
 @api_router.post("/profile/create")
-async def create_profile(request: ProfileCreate):
+async def create_profile(request: ProfileCreate, user: User = Depends(get_current_user)):
     """Create user profile with embedding"""
-    user = await get_current_user()
     
     # Check if profile already exists
     existing = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
