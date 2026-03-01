@@ -299,6 +299,52 @@ async def create_profile(request: ProfileCreate, user: User = Depends(get_curren
     
     return {"profile_id": profile_id, "message": "Profile created successfully"}
 
+@api_router.put("/profile/me")
+async def update_profile(request: ProfileCreate, user: User = Depends(get_current_user)):
+    """Update user profile"""
+    profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Generate new embedding if ikigai changed
+    ikigai_text = f"Passion: {request.ikigai.passion}. Skills: {request.ikigai.skillset}. Mission: {request.ikigai.mission}. Working Style: {request.ikigai.working_style_availability}."
+    embedding_response = openai_client.embeddings.create(
+        model="text-embedding-3-small",
+        input=ikigai_text
+    )
+    embedding = embedding_response.data[0].embedding
+    
+    # Update profile
+    await db.profiles.update_one(
+        {"user_id": user.user_id},
+        {
+            "$set": {
+                "full_name": request.full_name,
+                "role_intent": request.role_intent,
+                "skills": request.skills,
+                "portfolio_url": request.portfolio_url,
+                "profile_embedding": embedding,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    # Update Ikigai
+    await db.ikigai.update_one(
+        {"profile_id": profile["profile_id"]},
+        {
+            "$set": {
+                "passion": request.ikigai.passion,
+                "skillset": request.ikigai.skillset,
+                "mission": request.ikigai.mission,
+                "working_style_availability": request.ikigai.working_style_availability
+            }
+        }
+    )
+    
+    return {"message": "Profile updated successfully"}
+
 @api_router.get("/profile/me")
 async def get_my_profile(user: User = Depends(get_current_user)):
     """Get current user's profile"""
