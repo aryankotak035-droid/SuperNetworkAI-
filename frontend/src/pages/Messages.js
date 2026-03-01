@@ -245,7 +245,20 @@ const Messages = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-8">Messages</h1>
+        <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
+          Messages
+          {wsConnected ? (
+            <span className="flex items-center gap-1 text-sm font-normal text-green-500">
+              <Wifi className="w-4 h-4" />
+              Live
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-sm font-normal text-muted-foreground">
+              <WifiOff className="w-4 h-4" />
+              Polling
+            </span>
+          )}
+        </h1>
 
         <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
           {/* Conversations List */}
