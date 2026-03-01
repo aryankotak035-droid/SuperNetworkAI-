@@ -35,14 +35,12 @@ const AuthCallback = () => {
           {
             headers: {
               'X-Session-ID': sessionId
-            }
+            },
+            withCredentials: true
           }
         );
 
-        const { session_token, user, has_profile } = response.data;
-
-        // Set cookie (backend should also set httpOnly cookie)
-        document.cookie = `session_token=${session_token}; path=/; max-age=604800; SameSite=None; Secure`;
+        const { user, has_profile } = response.data;
 
         toast.success(`Welcome, ${user.name}!`);
 
