@@ -7,6 +7,7 @@ import IkigaiChat from "./pages/IkigaiChat";
 import Profile from "./pages/Profile";
 import SearchResults from "./pages/SearchResults";
 import Connections from "./pages/Connections";
+import Messages from "./pages/Messages";
 import { Toaster } from "./components/ui/sonner";
 
 function AppRouter() {
@@ -30,6 +31,8 @@ function AppRouter() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/search" element={<SearchResults />} />
       <Route path="/connections" element={<Connections />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/messages/:profileId" element={<Messages />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
