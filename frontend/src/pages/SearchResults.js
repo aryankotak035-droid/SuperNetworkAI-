@@ -146,9 +146,17 @@ const SearchResults = () => {
 
                   <div className="flex items-start gap-6 pr-16">
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-2xl font-bold text-white flex-shrink-0 shadow-lg">
-                      {result.profile.full_name.charAt(0)}
-                    </div>
+                    {result.profile.profile_image ? (
+                      <img
+                        src={`${BACKEND_URL}${result.profile.profile_image}`}
+                        alt={result.profile.full_name}
+                        className="w-16 h-16 rounded-2xl object-cover flex-shrink-0 shadow-lg"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-2xl font-bold text-white flex-shrink-0 shadow-lg">
+                        {result.profile.full_name.charAt(0)}
+                      </div>
+                    )}
 
                     <div className="flex-1">
                       {/* Name & Role */}
