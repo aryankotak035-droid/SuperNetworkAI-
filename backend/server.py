@@ -34,6 +34,12 @@ EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 # PostgreSQL connection string
 DATABASE_URL = os.environ['DATABASE_URL']
 
+# Upload directory for profile images
+UPLOAD_DIR = ROOT_DIR / 'uploads' / 'profiles'
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
