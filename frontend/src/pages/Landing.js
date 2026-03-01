@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles, Network, Brain, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Users } from "lucide-react";
 import { Button } from "../components/ui/button";
 
 const Landing = () => {
@@ -10,106 +10,137 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-white overflow-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 ikigai-gradient opacity-60 pointer-events-none" />
-      
-      {/* Hero Section */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 min-h-screen flex items-center justify-center px-6"
-      >
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Logo/Title */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-8"
-          >
-            <div className="inline-flex items-center gap-3 mb-4">
-              <Sparkles className="w-10 h-10 text-primary" />
-              <h1 className="text-6xl font-outfit font-bold text-gradient">
-                SuperNetworkAI
-              </h1>
+    <div className="min-h-screen bg-[#09090B] relative overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-60 -left-40 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="container mx-auto px-6 py-6"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="text-xl font-outfit font-bold text-white">SuperNetworkAI</span>
             </div>
-            <p className="text-2xl text-gray-400 font-outfit">
-              Where Human Purpose Meets AI Precision
-            </p>
-          </motion.div>
+          </div>
+        </motion.header>
 
-          {/* Value Prop */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed"
-          >
-            Stop wasting time on mismatched connections. Our AI-powered platform
-            matches you with founders, builders, and clients based on your{" "}
-            <span className="text-primary font-semibold">Ikigai</span> — your
-            passions, skills, mission, and working style.
-          </motion.p>
-
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="mb-20"
-          >
-            <Button
-              data-testid="sign-in-button"
-              onClick={handleSignIn}
-              size="lg"
-              className="rounded-full px-12 py-6 text-lg font-semibold glow-effect hover:glow-effect-hover hover:scale-105 transform transition-all duration-300 bg-primary hover:bg-primary/90"
+        {/* Hero */}
+        <div className="container mx-auto px-6 py-20">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              Sign in with Google
-            </Button>
-          </motion.div>
-
-          {/* Feature Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
-          >
-            <div className="glass-effect rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 group">
-              <Brain className="w-12 h-12 text-primary mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-outfit font-semibold mb-3">AI-Powered Ikigai</h3>
-              <p className="text-gray-400">
-                Upload your CV and let AI extract your unique profile — passions,
-                skills, mission, and working style.
+              <h1 className="text-6xl md:text-7xl font-outfit font-bold text-white mb-6 leading-tight">
+                Find Your Perfect
+                <span className="block bg-gradient-to-r from-primary via-blue-400 to-secondary bg-clip-text text-transparent">
+                  Match, Not Just Skills
+                </span>
+              </h1>
+              <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                AI-powered networking that matches you based on <span className="text-white font-semibold">passion, mission, and purpose</span> — not just keywords.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="glass-effect rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 group">
-              <Network className="w-12 h-12 text-secondary mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-outfit font-semibold mb-3">Intent-Based Matching</h3>
-              <p className="text-gray-400">
-                Search in natural language. Our two-stage RAG pipeline ranks
-                matches based on mission, passion, and skill alignment.
-              </p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20"
+            >
+              <Button
+                data-testid="sign-in-button"
+                onClick={handleSignIn}
+                size="lg"
+                className="group relative overflow-hidden rounded-full px-10 py-7 text-lg font-semibold bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/50"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Get Started
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Button>
+            </motion.div>
 
-            <div className="glass-effect rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 group">
-              <Zap className="w-12 h-12 text-yellow-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-outfit font-semibold mb-3">AI Match Summaries</h3>
-              <p className="text-gray-400">
-                Get a one-sentence AI explanation for every match, showing you
-                exactly why you're a great fit.
-              </p>
-            </div>
-          </motion.div>
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-20"
+            >
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">30+</div>
+                <div className="text-sm text-gray-400">Active Profiles</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">AI</div>
+                <div className="text-sm text-gray-400">Powered Matching</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">< 3s</div>
+                <div className="text-sm text-gray-400">Match Results</div>
+              </div>
+            </motion.div>
+
+            {/* Features */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            >
+              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all duration-300 hover:-translate-y-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Sparkles className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-outfit font-bold text-white mb-3">AI Ikigai Extraction</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Upload your CV, we extract your passions, skills, mission, and working style automatically.
+                  </p>
+                </div>
+              </div>
+
+              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-secondary/50 transition-all duration-300 hover:-translate-y-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Zap className="w-7 h-7 text-secondary" />
+                  </div>
+                  <h3 className="text-xl font-outfit font-bold text-white mb-3">Intent-Based Search</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Natural language queries with two-stage AI ranking. Get matches based on mission alignment.
+                  </p>
+                </div>
+              </div>
+
+              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:-translate-y-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-xl bg-blue-400/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Users className="w-7 h-7 text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-outfit font-bold text-white mb-3">Smart Connections</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Every match comes with an AI explanation showing why you're a perfect fit.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </motion.div>
-
-      {/* Footer */}
-      <div className="fixed bottom-0 w-full py-6 text-center text-gray-500 text-sm">
-        Built for the 24-hour hackathon • SuperNetworkAI
       </div>
     </div>
   );
