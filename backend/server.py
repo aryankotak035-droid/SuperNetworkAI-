@@ -521,6 +521,126 @@ async def respond_to_connection(connection_id: str, response_data: ConnectionRes
     
     return {"message": f"Connection {response_data.status.lower()}"}
 
+# Messages endpoints
+class MessageSend(BaseModel):
+    receiver_profile_id: str
+    content: str
+
+@api_router.post("/messages/send")
+async def send_message(request: MessageSend, user: User = Depends(get_current_user)):
+    """Send a message to a connected user"""
+    sender_profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not sender_profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Check if users are connected
+    connection = await db.connections.find_one({
+        "$or": [
+            {"sender_id": sender_profile["profile_id"], "receiver_id": request.receiver_profile_id, "status": "ACCEPTED"},
+            {"sender_id": request.receiver_profile_id, "receiver_id": sender_profile["profile_id"], "status": "ACCEPTED"}
+        ]
+    }, {"_id": 0})
+    
+    if not connection:
+        raise HTTPException(status_code=403, detail="You can only message connected users")
+    
+    message_id = f"msg_{uuid.uuid4().hex[:12]}"
+    message = {
+        "message_id": message_id,
+        "sender_id": sender_profile["profile_id"],
+        "receiver_id": request.receiver_profile_id,
+        "content": request.content,
+        "read": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.messages.insert_one(message)
+    
+    return {"message_id": message_id, "message": "Message sent"}
+
+@api_router.get("/messages/conversations")
+async def get_conversations(user: User = Depends(get_current_user)):
+    """Get list of conversations"""
+    profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not profile:
+        return []
+    
+    # Get all accepted connections
+    connections = await db.connections.find({
+        "$or": [
+            {"sender_id": profile["profile_id"], "status": "ACCEPTED"},
+            {"receiver_id": profile["profile_id"], "status": "ACCEPTED"}
+        ]
+    }, {"_id": 0}).to_list(None)
+    
+    conversations = []
+    for conn in connections:
+        other_profile_id = conn["receiver_id"] if conn["sender_id"] == profile["profile_id"] else conn["sender_id"]
+        other_profile = await db.profiles.find_one({"profile_id": other_profile_id}, {"_id": 0, "profile_embedding": 0})
+        
+        # Get last message
+        last_message = await db.messages.find_one(
+            {
+                "$or": [
+                    {"sender_id": profile["profile_id"], "receiver_id": other_profile_id},
+                    {"sender_id": other_profile_id, "receiver_id": profile["profile_id"]}
+                ]
+            },
+            {"_id": 0},
+            sort=[("created_at", -1)]
+        )
+        
+        # Count unread messages
+        unread_count = await db.messages.count_documents({
+            "sender_id": other_profile_id,
+            "receiver_id": profile["profile_id"],
+            "read": False
+        })
+        
+        conversations.append({
+            "profile": other_profile,
+            "last_message": last_message,
+            "unread_count": unread_count
+        })
+    
+    return conversations
+
+@api_router.get("/messages/{profile_id}")
+async def get_messages(profile_id: str, user: User = Depends(get_current_user)):
+    """Get messages with a specific user"""
+    profile = await db.profiles.find_one({"user_id": user.user_id}, {"_id": 0})
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Check connection
+    connection = await db.connections.find_one({
+        "$or": [
+            {"sender_id": profile["profile_id"], "receiver_id": profile_id, "status": "ACCEPTED"},
+            {"sender_id": profile_id, "receiver_id": profile["profile_id"], "status": "ACCEPTED"}
+        ]
+    }, {"_id": 0})
+    
+    if not connection:
+        raise HTTPException(status_code=403, detail="Not connected with this user")
+    
+    # Get messages
+    messages = await db.messages.find({
+        "$or": [
+            {"sender_id": profile["profile_id"], "receiver_id": profile_id},
+            {"sender_id": profile_id, "receiver_id": profile["profile_id"]}
+        ]
+    }, {"_id": 0}).sort("created_at", 1).to_list(None)
+    
+    # Mark messages as read
+    await db.messages.update_many(
+        {"sender_id": profile_id, "receiver_id": profile["profile_id"], "read": False},
+        {"$set": {"read": True}}
+    )
+    
+    return messages
+
 app.include_router(api_router)
 
 app.add_middleware(
