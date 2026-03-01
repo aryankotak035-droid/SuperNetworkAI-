@@ -48,7 +48,7 @@ const AuthCallback = () => {
         if (has_profile) {
           navigate('/dashboard', { state: { user } });
         } else {
-          navigate('/profile/setup', { state: { user } });
+          navigate('/ikigai-chat', { state: { user } });
         }
       } catch (error) {
         console.error('Session processing error:', error);

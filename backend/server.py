@@ -211,13 +211,6 @@ async def logout(response: Response, session_token: Optional[str] = Cookie(None)
 async def extract_ikigai(request: IkigaiExtractRequest, current_user: User = Depends(get_current_user)):
     """Extract Ikigai from CV text using LLM"""
     try:
-        # Check if input is a URL
-        if request.cv_text.strip().startswith(('http://', 'https://', 'www.')):
-            raise HTTPException(
-                status_code=400, 
-                detail="Please copy and paste the actual text content from your profile, not the URL. LinkedIn and other profile URLs cannot be directly processed."
-            )
-        
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"ikigai_{uuid.uuid4().hex[:8]}",
@@ -238,7 +231,6 @@ IMPORTANT: Your response must be ONLY a valid JSON object, nothing else. Do not 
         # Clean response - remove markdown code blocks if present
         clean_response = response.strip()
         if clean_response.startswith('```'):
-            # Remove markdown code block formatting
             clean_response = clean_response.split('```')[1]
             if clean_response.startswith('json'):
                 clean_response = clean_response[4:]
