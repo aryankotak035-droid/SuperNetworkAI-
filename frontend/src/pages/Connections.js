@@ -70,29 +70,29 @@ const Connections = () => {
             data-testid="back-button"
             variant="ghost"
             onClick={() => navigate('/dashboard')}
-            className="rounded-full hover:bg-white/10"
+            className="rounded-full hover:bg-white/10 text-gray-300 hover:text-white"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Dashboard
+            Back
           </Button>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-effect rounded-2xl p-8"
+          className="rounded-3xl bg-white/5 border border-white/10 p-8 backdrop-blur-xl"
         >
-          <h1 className="text-3xl font-outfit font-bold text-gradient mb-6">Connections</h1>
+          <h1 className="text-3xl font-outfit font-bold text-white mb-6">Connections</h1>
 
           <Tabs defaultValue="received" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white/5 mb-8">
-              <TabsTrigger value="received" data-testid="received-tab">
+            <TabsList className="grid w-full grid-cols-3 bg-black/30 mb-8 p-1.5 rounded-xl">
+              <TabsTrigger value="received" data-testid="received-tab" className="rounded-lg data-[state=active]:bg-primary">
                 Received ({pendingReceived.length})
               </TabsTrigger>
-              <TabsTrigger value="sent" data-testid="sent-tab">
+              <TabsTrigger value="sent" data-testid="sent-tab" className="rounded-lg data-[state=active]:bg-primary">
                 Sent ({pendingSent.length})
               </TabsTrigger>
-              <TabsTrigger value="accepted" data-testid="accepted-tab">
+              <TabsTrigger value="accepted" data-testid="accepted-tab" className="rounded-lg data-[state=active]:bg-primary">
                 Accepted ({accepted.length})
               </TabsTrigger>
             </TabsList>
@@ -108,11 +108,11 @@ const Connections = () => {
                   <div
                     key={conn.connection_id}
                     data-testid="connection-card"
-                    className="border border-white/10 rounded-xl p-6 bg-white/5 hover:bg-white/10 transition-all"
+                    className="border border-white/10 rounded-2xl p-6 bg-white/5 hover:bg-white/10 transition-all hover:border-primary/30"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-lg font-bold text-white">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-white shadow-lg">
                           {conn.other_profile?.full_name?.charAt(0) || '?'}
                         </div>
                         <div>
@@ -129,7 +129,7 @@ const Connections = () => {
                           data-testid="accept-button"
                           onClick={() => handleRespond(conn.connection_id, 'ACCEPTED')}
                           size="sm"
-                          className="rounded-full bg-secondary hover:bg-secondary/90"
+                          className="rounded-full bg-secondary hover:bg-secondary/90 shadow-lg shadow-secondary/20 hover:scale-105 transition-all"
                         >
                           <Check className="w-4 h-4 mr-1" />
                           Accept
@@ -139,7 +139,7 @@ const Connections = () => {
                           onClick={() => handleRespond(conn.connection_id, 'REJECTED')}
                           size="sm"
                           variant="destructive"
-                          className="rounded-full"
+                          className="rounded-full hover:scale-105 transition-all"
                         >
                           <X className="w-4 h-4 mr-1" />
                           Decline
