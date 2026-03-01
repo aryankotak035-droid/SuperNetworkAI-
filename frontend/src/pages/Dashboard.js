@@ -62,7 +62,7 @@ const Dashboard = () => {
       const response = await axios.post(
         `${BACKEND_URL}/api/search`,
         {
-          query: \"Find interesting professionals\",
+          query: "Find interesting professionals",
           role_filter: null
         },
         { withCredentials: true }
@@ -200,8 +200,8 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h2 className="text-3xl font-bold mb-2\">Find Your Ideal Builder</h2>
-          <p className="text-muted-foreground mb-6\">Discover professionals who match your vision and mission</p>
+          <h2 className="text-3xl font-bold mb-2">Find Your Ideal Builder</h2>
+          <p className="text-muted-foreground mb-6">Discover professionals who match your vision and mission</p>
           
           <form onSubmit={handleSearch} className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -217,7 +217,7 @@ const Dashboard = () => {
 
           {/* Trending Filters */}
           <div>
-            <div className="text-sm font-medium text-muted-foreground mb-3\">TRENDING</div>
+            <div className="text-sm font-medium text-muted-foreground mb-3">TRENDING</div>
             <div className="flex gap-3 flex-wrap">
               {trendingFilters.map((filter) => (
                 <motion.button
@@ -269,7 +269,7 @@ const Dashboard = () => {
                       {result.profile.full_name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold truncate\">{result.profile.full_name}</h3>
+                      <h3 className="text-lg font-bold truncate">{result.profile.full_name}</h3>
                       <span className="inline-block text-sm text-secondary font-medium">
                         {result.profile.role_intent}
                       </span>
@@ -278,7 +278,7 @@ const Dashboard = () => {
 
                   {/* Bio/Mission */}
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
-                    {result.profile.ikigai?.mission || \"Building something amazing\"}
+                    {result.profile.ikigai?.mission || "Building something amazing"}
                   </p>
 
                   {/* Skills */}
@@ -286,13 +286,13 @@ const Dashboard = () => {
                     {result.profile.skills.slice(0, 3).map((skill, idx) => (
                       <span
                         key={idx}
-                        className="text-xs px-2 py-1 rounded-md bg-muted text-foreground\"
+                        className="text-xs px-2 py-1 rounded-md bg-muted text-foreground"
                       >
                         {skill}
                       </span>
                     ))}
                     {result.profile.skills.length > 3 && (
-                      <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground\">
+                      <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground">
                         +{result.profile.skills.length - 3}
                       </span>
                     )}
@@ -302,7 +302,7 @@ const Dashboard = () => {
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
                     <div className="flex items-center gap-2 mb-1">
                       <Sparkles className="w-4 h-4 text-primary" />
-                      <span className="text-xs font-bold text-primary\">AI MATCH INSIGHT</span>
+                      <span className="text-xs font-bold text-primary">AI MATCH INSIGHT</span>
                     </div>
                     <p className="text-xs text-foreground leading-relaxed line-clamp-2">
                       {result.ai_explanation}
@@ -312,7 +312,7 @@ const Dashboard = () => {
                   {/* Connect Button */}
                   <Button
                     onClick={() => handleConnect(result.profile.profile_id)}
-                    className="w-full btn-primary\"
+                    className="w-full btn-primary"
                     data-testid={`connect-button-${index}`}
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
@@ -332,8 +332,8 @@ const Dashboard = () => {
           >
             <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
               <Sparkles className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-3\">No profiles found</h3>
-              <p className="text-muted-foreground mb-6\">
+              <h3 className="text-2xl font-bold mb-3">No profiles found</h3>
+              <p className="text-muted-foreground mb-6">
                 Try a different filter or check back later!
               </p>
             </div>
