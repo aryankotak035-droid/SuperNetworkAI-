@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Response, Cookie, Depends, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Response, Cookie, Depends, WebSocket, WebSocketDisconnect, UploadFile, File
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import asyncpg
@@ -16,6 +17,7 @@ import json
 from openai import OpenAI
 import numpy as np
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+import shutil
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
