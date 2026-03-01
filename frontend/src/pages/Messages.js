@@ -1,14 +1,21 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { ArrowLeft, Send, MessageCircle, Clock } from "lucide-react";
+import { ArrowLeft, Send, MessageCircle, Clock, Wifi, WifiOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Convert HTTP URL to WebSocket URL
+const getWebSocketUrl = () => {
+  const url = new URL(BACKEND_URL);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.origin;
+};
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -20,7 +27,95 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [currentProfile, setCurrentProfile] = useState(null);
+  const [wsConnected, setWsConnected] = useState(false);
   const messagesEndRef = useRef(null);
+  const wsRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
+
+  // WebSocket connection
+  const connectWebSocket = useCallback((userId) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    
+    try {
+      const wsUrl = `${getWebSocketUrl()}/api/ws/${userId}`;
+      wsRef.current = new WebSocket(wsUrl);
+      
+      wsRef.current.onopen = () => {
+        setWsConnected(true);
+        console.log('WebSocket connected');
+      };
+      
+      wsRef.current.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'new_message') {
+            // Add new message to state if it's from the selected conversation
+            if (selectedConversation === data.sender_id || currentProfile?.profile_id === data.sender_id) {
+              setMessages(prev => [...prev, {
+                message_id: data.message_id,
+                sender_id: data.sender_id,
+                content: data.content,
+                created_at: data.created_at,
+                read: false
+              }]);
+            }
+            // Refresh conversations to update unread count
+            fetchConversations();
+          }
+        } catch (e) {
+          console.error('Failed to parse WebSocket message:', e);
+        }
+      };
+      
+      wsRef.current.onclose = () => {
+        setWsConnected(false);
+        console.log('WebSocket disconnected');
+        // Attempt to reconnect after 5 seconds
+        reconnectTimeoutRef.current = setTimeout(() => {
+          if (userId) connectWebSocket(userId);
+        }, 5000);
+      };
+      
+      wsRef.current.onerror = () => {
+        setWsConnected(false);
+      };
+    } catch (e) {
+      console.error('WebSocket connection failed:', e);
+    }
+  }, [selectedConversation, currentProfile]);
+
+  // Cleanup WebSocket on unmount
+  useEffect(() => {
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Connect WebSocket when user profile is available
+  useEffect(() => {
+    if (currentProfile?.user_id) {
+      // We need the user_id for WebSocket, but profile has profile_id
+      // Let's fetch the user data to get the user_id
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/api/auth/me`, {
+            withCredentials: true
+          });
+          if (response.data?.user_id) {
+            connectWebSocket(response.data.user_id);
+          }
+        } catch (e) {
+          console.error('Failed to fetch user for WebSocket:', e);
+        }
+      };
+      fetchUser();
+    }
+  }, [currentProfile, connectWebSocket]);
 
   useEffect(() => {
     fetchConversations();
