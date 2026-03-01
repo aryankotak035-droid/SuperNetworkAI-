@@ -799,7 +799,7 @@ Return ONLY valid JSON as an array of objects with keys:
                     })
             
             return results
-        except Exception as e:
+        except Exception:
             # Fallback: return top 3 by pgvector similarity
             results = []
             for i, p in enumerate(profiles[:3]):
