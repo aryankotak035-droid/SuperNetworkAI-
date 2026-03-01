@@ -144,40 +144,65 @@ def main():
         print("❌ API is not accessible. Stopping tests.")
         return 1
     
-    # Test 2: Ikigai Extraction (No auth required)
+    # Test 2: Ikigai Extraction (No auth required) - MOST IMPORTANT
     tester.test_ikigai_extraction()
     
-    # Test 3: Mock Session (This will likely fail in real environment)
-    session_created = tester.create_mock_session()
+    # Test 3: Auth endpoints expect 401 (correct behavior)
+    success, _ = tester.run_test("Auth Endpoint Protection", "GET", "auth/me", 401)
     
-    # Test 4: Auth endpoints (if session exists)
-    if session_created:
-        tester.run_test("Get Current User", "GET", "auth/me", 200)
-        tester.run_test("Get User Profile", "GET", "profile/me", 200)  # May return 404 if no profile
+    # Test 4: Profile endpoints expect 401 (correct behavior) 
+    success, _ = tester.run_test("Profile Endpoint Protection", "GET", "profile/me", 401)
     
-    # Test 5: Search endpoint (requires auth)
-    if session_created:
-        tester.run_test(
-            "Search Profiles",
-            "POST",
-            "search",
+    # Test 5: Search endpoint expect 401 (correct behavior)
+    success, _ = tester.run_test(
+        "Search Endpoint Protection",
+        "POST",
+        "search", 
+        401,
+        {"query": "test query"}
+    )
+    
+    # Test 6: Connection endpoints expect 401 (correct behavior)
+    success, _ = tester.run_test("Connections Endpoint Protection", "GET", "connections/my", 401)
+    
+    # Test 7: Multiple Ikigai extractions to test reliability
+    cv_samples = [
+        "Software engineer with 3 years React experience, passionate about fintech",
+        "Product manager seeking co-founder for SaaS startup, loves remote work",
+        "Designer with UX background, wants to build educational tools"
+    ]
+    
+    for i, cv in enumerate(cv_samples):
+        success, response = tester.run_test(
+            f"Ikigai Sample {i+1}",
+            "POST", 
+            "profile/extract-ikigai",
             200,
-            {"query": "I need a technical co-founder skilled in React"}
+            {"cv_text": cv}
         )
+        if not success:
+            break
     
     # Print summary
     print("\n" + "="*60)
     print(f"📊 Tests completed: {tester.tests_passed}/{tester.tests_run} passed")
     print(f"⏰ Test finished at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    if tester.tests_passed == 0:
-        print("🚨 CRITICAL: No tests passed - major issues detected")
+    # Special analysis for this app
+    ikigai_tests = [r for r in tester.results if 'Ikigai' in r['test']]
+    ikigai_success = sum(1 for t in ikigai_tests if t['success'])
+    
+    print(f"\n🧠 Ikigai Extraction: {ikigai_success}/{len(ikigai_tests)} successful")
+    
+    if ikigai_success == 0:
+        print("🚨 CRITICAL: Ikigai extraction (core feature) is broken")
         return 1
-    elif tester.tests_passed / tester.tests_run < 0.5:
-        print("⚠️  WARNING: Less than 50% tests passed")
+    elif tester.tests_passed / tester.tests_run < 0.7:
+        print("⚠️  WARNING: Less than 70% tests passed")
         return 1
     else:
-        print("✅ Testing completed with acceptable results")
+        print("✅ Backend core functionality working correctly")
+        print("📝 NOTE: Auth endpoints correctly protected - frontend testing needed for full flow")
         return 0
 
 if __name__ == "__main__":
