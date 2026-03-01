@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Zap, Users } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Users, Brain, Network, CheckCircle2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
 const Landing = () => {
@@ -10,11 +10,34 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090B] relative overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-60 -left-40 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+    <div className="min-h-screen bg-[#0A0A0F] relative overflow-hidden noise-bg">
+      {/* Animated gradient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute -top-1/2 -right-1/4 w-[800px] h-[800px] bg-blue-500/20 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute -bottom-1/2 -left-1/4 w-[800px] h-[800px] bg-emerald-500/20 rounded-full blur-3xl"
+        />
       </div>
 
       {/* Content */}
@@ -23,119 +46,188 @@ const Landing = () => {
         <motion.header 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="container mx-auto px-6 py-6"
+          className="container mx-auto px-6 py-8"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <span className="text-xl font-outfit font-bold text-white">SuperNetworkAI</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center glow-primary">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
+            <span className="text-2xl font-bold text-white tracking-tight">SuperNetworkAI</span>
           </div>
         </motion.header>
 
         {/* Hero */}
-        <div className="container mx-auto px-6 py-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h1 className="text-6xl md:text-7xl font-outfit font-bold text-white mb-6 leading-tight">
-                Find Your Perfect
-                <span className="block bg-gradient-to-r from-primary via-blue-400 to-secondary bg-clip-text text-transparent">
-                  Match, Not Just Skills
-                </span>
-              </h1>
-              <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
-                AI-powered networking that matches you based on <span className="text-white font-semibold">passion, mission, and purpose</span> — not just keywords.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20"
-            >
-              <Button
-                data-testid="sign-in-button"
-                onClick={handleSignIn}
-                size="lg"
-                className="group relative overflow-hidden rounded-full px-10 py-7 text-lg font-semibold bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/50"
+        <div className="container mx-auto px-6 py-20 lg:py-32">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Left: Content */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  Get Started
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Button>
-            </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+                >
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-sm text-gray-300">AI-Powered Networking Platform</span>
+                </motion.div>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-20"
-            >
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">30+</div>
-                <div className="text-sm text-gray-400">Active Profiles</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">AI</div>
-                <div className="text-sm text-gray-400">Powered Matching</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">&lt;3s</div>
-                <div className="text-sm text-gray-400">Match Results</div>
-              </div>
-            </motion.div>
+                <h1 className="text-6xl lg:text-7xl font-bold text-white mb-8 leading-[1.1]">
+                  Find Connections
+                  <span className="block text-gradient-premium mt-2">Beyond Skills</span>
+                </h1>
 
-            {/* Features */}
+                <p className="text-xl text-gray-400 mb-12 leading-relaxed max-w-xl">
+                  Match with founders, builders, and clients based on{" "}
+                  <span className="text-white font-semibold">shared passion, aligned missions,</span> and{" "}
+                  <span className="text-white font-semibold">working synergy</span> — powered by advanced AI.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                  <Button
+                    data-testid="sign-in-button"
+                    onClick={handleSignIn}
+                    size="lg"
+                    className="group btn-premium text-white font-semibold px-8 py-7 text-lg rounded-2xl"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      Get Started Free
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 smooth-transition" />
+                    </span>
+                  </Button>
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center gap-8">
+                  <div>
+                    <div className="text-3xl font-bold text-white mb-1">30+</div>
+                    <div className="text-sm text-gray-500">Active Profiles</div>
+                  </div>
+                  <div className="w-px h-12 bg-white/10" />
+                  <div>
+                    <div className="text-3xl font-bold text-white mb-1">&lt;3s</div>
+                    <div className="text-sm text-gray-500">Match Time</div>
+                  </div>
+                  <div className="w-px h-12 bg-white/10" />
+                  <div>
+                    <div className="text-3xl font-bold text-white mb-1">AI</div>
+                    <div className="text-sm text-gray-500">Powered</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Right: Feature Cards */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="hidden lg:block"
+              >
+                <div className="relative">
+                  {/* Large feature card */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="glass-card glass-card-hover rounded-3xl p-8 mb-6 glow-primary smooth-transition"
+                  >
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                        <Brain className="w-7 h-7 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-2">AI Ikigai Extraction</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                          Upload your CV and watch AI extract your unique purpose, skills, mission, and working style in seconds.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-emerald-400">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Powered by GPT-4o-mini</span>
+                    </div>
+                  </motion.div>
+
+                  {/* Two smaller cards */}
+                  <div className="grid grid-cols-2 gap-6">
+                    <motion.div
+                      whileHover={{ y: -5 }}
+                      className="glass-card glass-card-hover rounded-2xl p-6 smooth-transition"
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mb-4">
+                        <Network className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">Smart Matching</h3>
+                      <p className="text-gray-400 text-xs leading-relaxed">
+                        Two-stage AI pipeline ranks matches by mission alignment
+                      </p>
+                    </motion.div>
+
+                    <motion.div
+                      whileHover={{ y: -5 }}
+                      className="glass-card glass-card-hover rounded-2xl p-6 smooth-transition"
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">AI Insights</h3>
+                      <p className="text-gray-400 text-xs leading-relaxed">
+                        Get AI-generated explanations for every match
+                      </p>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Features Grid - Below Hero */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="mt-32 grid md:grid-cols-3 gap-8"
             >
-              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all duration-300 hover:-translate-y-2">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Sparkles className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-outfit font-bold text-white mb-3">AI Ikigai Extraction</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Upload your CV, we extract your passions, skills, mission, and working style automatically.
-                  </p>
+              <div className="glass-card rounded-3xl p-8 glass-card-hover smooth-transition">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 flex items-center justify-center mb-6">
+                  <Sparkles className="w-7 h-7 text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Ikigai Profiles</h3>
+                <p className="text-gray-400 leading-relaxed mb-6">
+                  Go beyond resumes. Our AI extracts your purpose, passion, and mission to create a holistic professional identity.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-blue-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  <span>Purpose-driven matching</span>
                 </div>
               </div>
 
-              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-secondary/50 transition-all duration-300 hover:-translate-y-2">
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Zap className="w-7 h-7 text-secondary" />
-                  </div>
-                  <h3 className="text-xl font-outfit font-bold text-white mb-3">Intent-Based Search</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Natural language queries with two-stage AI ranking. Get matches based on mission alignment.
-                  </p>
+              <div className="glass-card rounded-3xl p-8 glass-card-hover smooth-transition">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 flex items-center justify-center mb-6">
+                  <Zap className="w-7 h-7 text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Intent Search</h3>
+                <p className="text-gray-400 leading-relaxed mb-6">
+                  Natural language queries with two-stage AI ranking. Find co-founders, teammates, or clients who truly align.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-emerald-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Semantic understanding</span>
                 </div>
               </div>
 
-              <div className="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:-translate-y-2">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-                <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-blue-400/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Users className="w-7 h-7 text-blue-400" />
-                  </div>
-                  <h3 className="text-xl font-outfit font-bold text-white mb-3">Smart Connections</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Every match comes with an AI explanation showing why you're a perfect fit.
-                  </p>
+              <div className="glass-card rounded-3xl p-8 glass-card-hover smooth-transition">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 flex items-center justify-center mb-6">
+                  <Users className="w-7 h-7 text-purple-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Smart Connect</h3>
+                <p className="text-gray-400 leading-relaxed mb-6">
+                  Every match comes with an AI-generated explanation showing exactly why you're compatible.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-purple-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  <span>Transparent AI reasoning</span>
                 </div>
               </div>
             </motion.div>
