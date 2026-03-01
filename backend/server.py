@@ -208,9 +208,16 @@ async def logout(response: Response, session_token: Optional[str] = Cookie(None)
 
 # Profile endpoints
 @api_router.post("/profile/extract-ikigai")
-async def extract_ikigai(request: IkigaiExtractRequest):
+async def extract_ikigai(request: IkigaiExtractRequest, current_user: User = Depends(get_current_user)):
     """Extract Ikigai from CV text using LLM"""
     try:
+        # Check if input is a URL
+        if request.cv_text.strip().startswith(('http://', 'https://', 'www.')):
+            raise HTTPException(
+                status_code=400, 
+                detail="Please copy and paste the actual text content from your profile, not the URL. LinkedIn and other profile URLs cannot be directly processed."
+            )
+        
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"ikigai_{uuid.uuid4().hex[:8]}",
@@ -220,15 +227,34 @@ async def extract_ikigai(request: IkigaiExtractRequest):
 - Mission: What they want to achieve or build
 - Working Style & Availability: Any indicators of how they work (remote, full-time, freelance, etc.)
 
-Return ONLY valid JSON with keys: passion, skillset, mission, working_style_availability. If a field cannot be determined, use \"Not specified.\""""
+Return ONLY valid JSON with keys: passion, skillset, mission, working_style_availability. If a field cannot be determined, use \"Not specified.\"
+
+IMPORTANT: Your response must be ONLY a valid JSON object, nothing else. Do not include any markdown formatting, code blocks, or explanatory text."""
         ).with_model("openai", "gpt-4o-mini")
         
-        user_message = UserMessage(text=request.cv_text)
+        user_message = UserMessage(text=f"Extract the Ikigai profile from this CV/portfolio text:\n\n{request.cv_text}")
         response = await chat.send_message(user_message)
         
+        # Clean response - remove markdown code blocks if present
+        clean_response = response.strip()
+        if clean_response.startswith('```'):
+            # Remove markdown code block formatting
+            clean_response = clean_response.split('```')[1]
+            if clean_response.startswith('json'):
+                clean_response = clean_response[4:]
+            clean_response = clean_response.strip()
+        
         # Parse JSON response
-        ikigai_data = json.loads(response)
+        ikigai_data = json.loads(clean_response)
+        
+        # Validate required fields
+        required_fields = ['passion', 'skillset', 'mission', 'working_style_availability']
+        if not all(field in ikigai_data for field in required_fields):
+            raise ValueError("Missing required fields in AI response")
+        
         return ikigai_data
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail=f"AI returned invalid format. Please try again or fill the form manually.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to extract Ikigai: {str(e)}")
 
