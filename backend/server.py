@@ -498,7 +498,7 @@ async def get_profile_by_id(profile_id: str, user: User = Depends(get_current_us
     pool = await get_db_pool()
     async with pool.acquire() as conn:
         profile_row = await conn.fetchrow(
-            """SELECT profile_id, user_id, full_name, role_intent, skills, portfolio_url, visibility_public, created_at, updated_at
+            """SELECT profile_id, user_id, full_name, role_intent, skills, portfolio_url, visibility_public, profile_image, created_at, updated_at
                FROM profiles WHERE profile_id = $1""",
             profile_id
         )
