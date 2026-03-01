@@ -533,6 +533,120 @@ async def update_visibility(visibility_public: bool, user: User = Depends(get_cu
     return {"message": "Visibility updated"}
 
 
+# Profile Image Upload endpoint
+@api_router.post("/profile/image")
+async def upload_profile_image(file: UploadFile = File(...), user: User = Depends(get_current_user)):
+    """Upload profile image"""
+    # Validate file type
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Invalid file type. Allowed: JPEG, PNG, WebP, GIF")
+    
+    # Read file content to check size
+    content = await file.read()
+    if len(content) > MAX_IMAGE_SIZE:
+        raise HTTPException(status_code=400, detail=f"File too large. Maximum size: {MAX_IMAGE_SIZE // (1024*1024)}MB")
+    
+    # Generate unique filename
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    filename = f"{user.user_id}_{uuid.uuid4().hex[:8]}.{ext}"
+    filepath = UPLOAD_DIR / filename
+    
+    # Save file
+    with open(filepath, 'wb') as f:
+        f.write(content)
+    
+    # Update profile with image path
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        # Delete old image if exists
+        old_image = await conn.fetchval(
+            "SELECT profile_image FROM profiles WHERE user_id = $1",
+            user.user_id
+        )
+        if old_image:
+            old_path = UPLOAD_DIR / old_image.split('/')[-1]
+            if old_path.exists():
+                old_path.unlink()
+        
+        # Update profile with new image
+        image_url = f"/api/uploads/profiles/{filename}"
+        await conn.execute(
+            "UPDATE profiles SET profile_image = $1 WHERE user_id = $2",
+            image_url, user.user_id
+        )
+    
+    return {"image_url": image_url, "message": "Profile image uploaded successfully"}
+
+
+@api_router.delete("/profile/image")
+async def delete_profile_image(user: User = Depends(get_current_user)):
+    """Delete profile image"""
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        image_url = await conn.fetchval(
+            "SELECT profile_image FROM profiles WHERE user_id = $1",
+            user.user_id
+        )
+        
+        if image_url:
+            # Delete file
+            filename = image_url.split('/')[-1]
+            filepath = UPLOAD_DIR / filename
+            if filepath.exists():
+                filepath.unlink()
+            
+            # Update profile
+            await conn.execute(
+                "UPDATE profiles SET profile_image = NULL WHERE user_id = $1",
+                user.user_id
+            )
+    
+    return {"message": "Profile image deleted"}
+
+
+# Search History endpoints
+@api_router.get("/search/history")
+async def get_search_history(user: User = Depends(get_current_user)):
+    """Get user's search history (last 10)"""
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        history = await conn.fetch(
+            """SELECT id, query, role_filter, created_at
+               FROM search_history
+               WHERE user_id = $1
+               ORDER BY created_at DESC
+               LIMIT 10""",
+            user.user_id
+        )
+        return [dict(h) for h in history]
+
+
+@api_router.delete("/search/history/{history_id}")
+async def delete_search_history_item(history_id: int, user: User = Depends(get_current_user)):
+    """Delete a specific search history item"""
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        result = await conn.execute(
+            "DELETE FROM search_history WHERE id = $1 AND user_id = $2",
+            history_id, user.user_id
+        )
+        if result == "DELETE 0":
+            raise HTTPException(status_code=404, detail="History item not found")
+    return {"message": "Search history item deleted"}
+
+
+@api_router.delete("/search/history")
+async def clear_search_history(user: User = Depends(get_current_user)):
+    """Clear all search history for user"""
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "DELETE FROM search_history WHERE user_id = $1",
+            user.user_id
+        )
+    return {"message": "Search history cleared"}
+
+
 # Search endpoint using pgvector for semantic search
 @api_router.post("/search")
 async def search_profiles(request: SearchRequest, user: User = Depends(get_current_user)):
