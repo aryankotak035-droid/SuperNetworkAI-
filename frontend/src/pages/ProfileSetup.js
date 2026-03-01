@@ -7,7 +7,7 @@ import { Textarea } from "../components/ui/textarea";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Loader2, Upload, Sparkles } from "lucide-react";
+import { Loader2, Upload, Sparkles, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -17,6 +17,7 @@ const ProfileSetup = () => {
   const [cvText, setCvText] = useState("");
   const [extracting, setExtracting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [extracted, setExtracted] = useState(false);
   const [ikigai, setIkigai] = useState({
     passion: "",
     skillset: "",
@@ -45,7 +46,8 @@ const ProfileSetup = () => {
       );
 
       setIkigai(response.data);
-      toast.success("Ikigai extracted successfully! Review and edit as needed.");
+      setExtracted(true);
+      toast.success("Ikigai extracted! Review and edit as needed.");
     } catch (error) {
       console.error('Extraction error:', error);
       toast.error("Failed to extract Ikigai. Please try again or fill manually.");
@@ -98,44 +100,51 @@ const ProfileSetup = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto"
+        className="max-w-3xl mx-auto"
       >
-        <div className="glass-effect rounded-2xl p-8 md:p-12">
-          <h1 className="text-4xl font-outfit font-bold text-gradient mb-3">
-            Create Your Ikigai Profile
-          </h1>
-          <p className="text-gray-400 mb-8">
-            Let AI extract your unique profile from your CV, then review and save.
-          </p>
+        <div className="rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12 backdrop-blur-xl">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-outfit font-bold text-white mb-3">
+              Create Your Profile
+            </h1>
+            <p className="text-gray-400">
+              Let AI extract your Ikigai from your CV
+            </p>
+          </div>
 
           {/* CV Upload Section */}
-          <div className="mb-8 p-6 rounded-xl border border-white/10 bg-white/5">
+          <div className="mb-10 p-6 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
             <div className="flex items-center gap-2 mb-4">
               <Upload className="w-5 h-5 text-primary" />
-              <Label className="text-lg font-outfit font-semibold">Paste Your CV or Portfolio</Label>
+              <Label className="text-lg font-outfit font-semibold text-white">Paste Your CV</Label>
             </div>
             <Textarea
               data-testid="cv-textarea"
               placeholder="Paste your CV text, LinkedIn profile, or portfolio description here..."
               value={cvText}
               onChange={(e) => setCvText(e.target.value)}
-              className="min-h-[200px] bg-background/50 border-white/10 text-white placeholder:text-gray-500 mb-4"
+              className="min-h-[180px] bg-black/30 border-white/10 text-white placeholder:text-gray-500 mb-4 rounded-xl"
             />
             <Button
               data-testid="extract-ikigai-button"
               onClick={handleExtractIkigai}
               disabled={extracting || !cvText.trim()}
-              className="rounded-full bg-primary hover:bg-primary/90"
+              className="rounded-full bg-primary hover:bg-primary/90 w-full hover:scale-105 transition-all shadow-lg shadow-primary/20"
             >
               {extracting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Extracting...
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  AI is extracting...
+                </>
+              ) : extracted ? (
+                <>
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  Extracted! Edit below
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Extract Ikigai with AI
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Extract with AI
                 </>
               )}
             </Button>
@@ -144,115 +153,115 @@ const ProfileSetup = () => {
           {/* Profile Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">Full Name *</Label>
+              <Label htmlFor="full_name" className="text-white mb-2 block">Full Name *</Label>
               <Input
                 id="full_name"
                 data-testid="full-name-input"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                className="bg-background/50 border-white/10 text-white"
+                className="bg-black/30 border-white/10 text-white rounded-xl"
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="role_intent">I'm looking for *</Label>
+              <Label htmlFor="role_intent" className="text-white mb-2 block">I'm looking for *</Label>
               <Select
                 value={formData.role_intent}
                 onValueChange={(value) => setFormData({ ...formData, role_intent: value })}
               >
-                <SelectTrigger data-testid="role-intent-select" className="bg-background/50 border-white/10 text-white">
+                <SelectTrigger data-testid="role-intent-select" className="bg-black/30 border-white/10 text-white rounded-xl">
                   <SelectValue placeholder="Select your intent" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#18181B] border-white/10">
                   <SelectItem value="COFOUNDER">A Co-founder</SelectItem>
-                  <SelectItem value="TEAMMATE">Teammates for a project</SelectItem>
-                  <SelectItem value="CLIENT">Clients for my services</SelectItem>
+                  <SelectItem value="TEAMMATE">Teammates</SelectItem>
+                  <SelectItem value="CLIENT">Clients</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label htmlFor="skills">Skills (comma-separated) *</Label>
+              <Label htmlFor="skills" className="text-white mb-2 block">Skills (comma-separated) *</Label>
               <Input
                 id="skills"
                 data-testid="skills-input"
                 placeholder="e.g., Next.js, Python, Product Management"
                 value={formData.skills}
                 onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-                className="bg-background/50 border-white/10 text-white"
+                className="bg-black/30 border-white/10 text-white rounded-xl"
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="portfolio_url">Portfolio URL (optional)</Label>
+              <Label htmlFor="portfolio_url" className="text-white mb-2 block">Portfolio URL (optional)</Label>
               <Input
                 id="portfolio_url"
                 data-testid="portfolio-url-input"
                 placeholder="https://your-portfolio.com"
                 value={formData.portfolio_url}
                 onChange={(e) => setFormData({ ...formData, portfolio_url: e.target.value })}
-                className="bg-background/50 border-white/10 text-white"
+                className="bg-black/30 border-white/10 text-white rounded-xl"
               />
             </div>
 
             {/* Ikigai Fields */}
             <div className="pt-6 border-t border-white/10">
-              <h3 className="text-xl font-outfit font-semibold mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-outfit font-semibold mb-6 flex items-center gap-2 text-white">
                 <Sparkles className="w-5 h-5 text-primary" />
-                Your Ikigai Profile
+                Your Ikigai
               </h3>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <Label htmlFor="passion">Passion *</Label>
+                  <Label htmlFor="passion" className="text-white mb-2 block">Passion *</Label>
                   <Textarea
                     id="passion"
                     data-testid="passion-textarea"
                     placeholder="What are you passionate about?"
                     value={ikigai.passion}
                     onChange={(e) => setIkigai({ ...ikigai, passion: e.target.value })}
-                    className="bg-background/50 border-white/10 text-white placeholder:text-gray-500"
+                    className="bg-black/30 border-white/10 text-white placeholder:text-gray-500 rounded-xl"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="skillset">Skillset *</Label>
+                  <Label htmlFor="skillset" className="text-white mb-2 block">Skillset *</Label>
                   <Textarea
                     id="skillset"
                     data-testid="skillset-textarea"
                     placeholder="Describe your technical and professional skills"
                     value={ikigai.skillset}
                     onChange={(e) => setIkigai({ ...ikigai, skillset: e.target.value })}
-                    className="bg-background/50 border-white/10 text-white placeholder:text-gray-500"
+                    className="bg-black/30 border-white/10 text-white placeholder:text-gray-500 rounded-xl"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="mission">Mission *</Label>
+                  <Label htmlFor="mission" className="text-white mb-2 block">Mission *</Label>
                   <Textarea
                     id="mission"
                     data-testid="mission-textarea"
                     placeholder="What do you want to achieve or build?"
                     value={ikigai.mission}
                     onChange={(e) => setIkigai({ ...ikigai, mission: e.target.value })}
-                    className="bg-background/50 border-white/10 text-white placeholder:text-gray-500"
+                    className="bg-black/30 border-white/10 text-white placeholder:text-gray-500 rounded-xl"
                     required
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="working_style">Working Style & Availability</Label>
+                  <Label htmlFor="working_style" className="text-white mb-2 block">Working Style</Label>
                   <Textarea
                     id="working_style"
                     data-testid="working-style-textarea"
                     placeholder="Remote, full-time, part-time, freelance, etc."
                     value={ikigai.working_style_availability}
                     onChange={(e) => setIkigai({ ...ikigai, working_style_availability: e.target.value })}
-                    className="bg-background/50 border-white/10 text-white placeholder:text-gray-500"
+                    className="bg-black/30 border-white/10 text-white placeholder:text-gray-500 rounded-xl"
                   />
                 </div>
               </div>
@@ -263,12 +272,12 @@ const ProfileSetup = () => {
               type="submit"
               disabled={saving}
               size="lg"
-              className="w-full rounded-full bg-primary hover:bg-primary/90 glow-effect hover:glow-effect-hover"
+              className="w-full rounded-full bg-primary hover:bg-primary/90 hover:scale-105 transition-all shadow-lg shadow-primary/20 mt-8 py-6"
             >
               {saving ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Saving Profile...
+                  Creating Profile...
                 </>
               ) : (
                 "Save Profile & Continue"
