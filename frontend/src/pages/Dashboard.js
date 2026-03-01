@@ -4,8 +4,9 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, UserCircle2, LogOut, Users, Eye, EyeOff, Sparkles, TrendingUp, UserPlus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -15,9 +16,20 @@ const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [profiles, setProfiles] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState("ALL");
+  const [loadingProfiles, setLoadingProfiles] = useState(false);
+
+  const trendingFilters = [
+    { id: "ALL", label: "All", icon: <Users className="w-4 h-4" /> },
+    { id: "COFOUNDER", label: "Co-founder", icon: <TrendingUp className="w-4 h-4" /> },
+    { id: "TEAMMATE", label: "Teammate", icon: <Users className="w-4 h-4" /> },
+    { id: "CLIENT", label: "Client", icon: <UserPlus className="w-4 h-4" /> }
+  ];
 
   useEffect(() => {
     checkAuth();
+    fetchProfiles();
   }, []);
 
   const checkAuth = async () => {
@@ -33,13 +45,40 @@ const Dashboard = () => {
       setProfile(profileResponse.data);
 
       if (!profileResponse.data) {
-        navigate('/profile/setup');
+        navigate('/ikigai-chat');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
       navigate('/');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProfiles = async () => {
+    setLoadingProfiles(true);
+    try {
+      // Get all profiles with simple search
+      const response = await axios.post(
+        `${BACKEND_URL}/api/search`,
+        {
+          query: \"Find interesting professionals\",
+          role_filter: null
+        },
+        { withCredentials: true }
+      );
+      
+      // Get more profiles by fetching with fallback
+      if (response.data.length < 10) {
+        // Fetch some synthetic profiles from database directly
+        // For now, we'll just use what we get
+      }
+      
+      setProfiles(response.data);
+    } catch (error) {
+      console.error('Failed to fetch profiles:', error);
+    } finally {
+      setLoadingProfiles(false);
     }
   };
 
@@ -77,33 +116,58 @@ const Dashboard = () => {
     }
   };
 
+  const handleConnect = async (profileId) => {
+    try {
+      await axios.post(
+        `${BACKEND_URL}/api/connections/request`,
+        { receiver_profile_id: profileId },
+        { withCredentials: true }
+      );
+      toast.success("Connection request sent!");
+    } catch (error) {
+      console.error('Connection request error:', error);
+      toast.error(error.response?.data?.detail || "Failed to send connection request");
+    }
+  };
+
+  const filteredProfiles = selectedFilter === "ALL" 
+    ? profiles 
+    : profiles.filter(p => p.profile.role_intent === selectedFilter);
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#09090B] flex items-center justify-center">
-        <div className="animate-pulse-glow">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-white/5 backdrop-blur-xl bg-white/5 sticky top-0 z-50">
+      <div className="border-b border-border backdrop-blur-xl bg-card/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-outfit font-bold text-white">SuperNetworkAI</h1>
+            <h1 className="text-xl font-bold\">SuperNetworkAI</h1>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              data-testid="profile-button"
+              variant="ghost"
+              onClick={() => navigate('/profile')}
+              className="rounded-full gap-2"
+            >
+              <UserCircle2 className="w-5 h-5" />
+              Profile
+            </Button>
             <Button
               data-testid="connections-button"
               variant="ghost"
               onClick={() => navigate('/connections')}
-              className="rounded-full hover:bg-white/10 text-gray-300 hover:text-white"
+              className="rounded-full gap-2"
             >
-              <Users className="w-5 h-5 mr-2" />
+              <Users className="w-5 h-5" />
               Connections
             </Button>
             {profile && (
@@ -111,21 +175,17 @@ const Dashboard = () => {
                 data-testid="visibility-toggle-button"
                 variant="ghost"
                 onClick={toggleVisibility}
-                className="rounded-full hover:bg-white/10 text-gray-300 hover:text-white"
+                className="rounded-full gap-2"
               >
-                {profile.visibility_public ? (
-                  <Eye className="w-5 h-5 mr-2" />
-                ) : (
-                  <EyeOff className="w-5 h-5 mr-2" />
-                )}
-                {profile.visibility_public ? 'Public' : 'Private'}
+                {profile.visibility_public ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </Button>
             )}
+            <ThemeToggle />
             <Button
               data-testid="logout-button"
               variant="ghost"
               onClick={handleLogout}
-              className="rounded-full hover:bg-white/10 text-gray-300 hover:text-white"
+              className="rounded-full"
             >
               <LogOut className="w-5 h-5" />
             </Button>
@@ -133,85 +193,149 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Search Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="mb-8"
         >
-          <div className="mb-8">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary mx-auto mb-4 flex items-center justify-center ring-4 ring-primary/20">
-              {user?.picture ? (
-                <img src={user.picture} alt={user.name} className="w-full h-full rounded-full" />
-              ) : (
-                <UserCircle2 className="w-12 h-12 text-white" />
-              )}
-            </div>
-            <h2 className="text-4xl font-outfit font-bold text-white mb-2">
-              {profile?.full_name || user?.name}
-            </h2>
-            <p className="text-gray-400 text-lg">
-              {profile?.role_intent === 'COFOUNDER' && "Looking for a Co-founder"}
-              {profile?.role_intent === 'TEAMMATE' && "Looking for Teammates"}
-              {profile?.role_intent === 'CLIENT' && "Looking for Clients"}
-            </p>
-          </div>
-
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto">
-            <div className="relative group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-primary transition-colors" />
-              <Input
-                data-testid="search-input"
-                type="text"
-                placeholder="Search for your perfect match... e.g., 'technical co-founder passionate about GenAI'"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-16 pr-6 py-8 text-lg rounded-2xl bg-white/5 border-white/10 backdrop-blur-xl text-white placeholder:text-gray-500 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-              />
-            </div>
-            <Button
-              data-testid="search-button"
-              type="submit"
-              size="lg"
-              className="mt-6 rounded-full px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all shadow-lg shadow-primary/25"
-            >
-              <Search className="w-5 h-5 mr-2" />
-              Find Matches
-            </Button>
+          <h2 className="text-3xl font-bold mb-2\">Find Your Ideal Builder</h2>
+          <p className="text-muted-foreground mb-6\">Discover professionals who match your vision and mission</p>
+          
+          <form onSubmit={handleSearch} className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              data-testid="search-input"
+              type="text"
+              placeholder="Search for co-founders, developers, designers..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-12 pr-4 py-6 text-lg rounded-2xl glass-card"
+            />
           </form>
+
+          {/* Trending Filters */}
+          <div>
+            <div className="text-sm font-medium text-muted-foreground mb-3\">TRENDING</div>
+            <div className="flex gap-3 flex-wrap">
+              {trendingFilters.map((filter) => (
+                <motion.button
+                  key={filter.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedFilter(filter.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${
+                    selectedFilter === filter.id
+                      ? 'bg-primary text-primary-foreground shadow-lg'
+                      : 'glass-card glass-card-hover'
+                  }`}
+                >
+                  {filter.icon}
+                  {filter.label}
+                </motion.button>
+              ))}
+            </div>
+          </div>
         </motion.div>
 
-        {/* Ikigai Profile */}
-        {profile?.ikigai && (
+        {/* Profiles Grid */}
+        {loadingProfiles ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full"></div>
+          </div>
+        ) : (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="rounded-3xl bg-white/5 border border-white/10 p-8 backdrop-blur-xl"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <h3 className="text-2xl font-outfit font-bold mb-6 text-white flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              Your Ikigai Profile
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="p-5 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
-                <div className="text-xs font-bold text-primary mb-2 tracking-wider">PASSION</div>
-                <p className="text-gray-300 leading-relaxed">{profile.ikigai.passion}</p>
-              </div>
-              <div className="p-5 rounded-xl bg-gradient-to-br from-secondary/10 to-transparent border border-secondary/20">
-                <div className="text-xs font-bold text-secondary mb-2 tracking-wider">MISSION</div>
-                <p className="text-gray-300 leading-relaxed">{profile.ikigai.mission}</p>
-              </div>
-              <div className="p-5 rounded-xl bg-gradient-to-br from-blue-400/10 to-transparent border border-blue-400/20">
-                <div className="text-xs font-bold text-blue-400 mb-2 tracking-wider">SKILLS</div>
-                <p className="text-gray-300 leading-relaxed">{profile.ikigai.skillset}</p>
-              </div>
-              <div className="p-5 rounded-xl bg-gradient-to-br from-purple-400/10 to-transparent border border-purple-400/20">
-                <div className="text-xs font-bold text-purple-400 mb-2 tracking-wider">WORKING STYLE</div>
-                <p className="text-gray-300 leading-relaxed">{profile.ikigai.working_style_availability || 'Not specified'}</p>
-              </div>
+            <AnimatePresence>
+              {filteredProfiles.map((result, index) => (
+                <motion.div
+                  key={result.profile.profile_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ y: -5 }}
+                  className="glass-card rounded-2xl p-6 glass-card-hover"
+                  data-testid="profile-card"
+                >
+                  {/* Avatar & Name */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-2xl font-bold text-white shadow-lg flex-shrink-0">
+                      {result.profile.full_name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-bold truncate\">{result.profile.full_name}</h3>
+                      <span className="inline-block text-sm text-secondary font-medium">
+                        {result.profile.role_intent}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bio/Mission */}
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
+                    {result.profile.ikigai?.mission || \"Building something amazing\"}
+                  </p>
+
+                  {/* Skills */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {result.profile.skills.slice(0, 3).map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="text-xs px-2 py-1 rounded-md bg-muted text-foreground\"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                    {result.profile.skills.length > 3 && (
+                      <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground\">
+                        +{result.profile.skills.length - 3}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Match Info */}
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      <span className="text-xs font-bold text-primary\">AI MATCH INSIGHT</span>
+                    </div>
+                    <p className="text-xs text-foreground leading-relaxed line-clamp-2">
+                      {result.ai_explanation}
+                    </p>
+                  </div>
+
+                  {/* Connect Button */}
+                  <Button
+                    onClick={() => handleConnect(result.profile.profile_id)}
+                    className="w-full btn-primary\"
+                    data-testid={`connect-button-${index}`}
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Connect
+                  </Button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+
+        {filteredProfiles.length === 0 && !loadingProfiles && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
+            <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
+              <Sparkles className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-2xl font-bold mb-3\">No profiles found</h3>
+              <p className="text-muted-foreground mb-6\">
+                Try a different filter or check back later!
+              </p>
             </div>
           </motion.div>
         )}
