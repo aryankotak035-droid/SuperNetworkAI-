@@ -4,7 +4,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Loader2, Send, Bot, User, ArrowUp } from "lucide-react";
+import { Textarea } from "../components/ui/textarea";
+import { Loader2, Bot, User, ArrowUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -12,9 +13,9 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const IKIGAI_QUESTIONS = [
   {
     id: "welcome",
-    text: "Hello! I'm here to help you build a profile that truly resonates. To get started, would you like to auto-fill your details from LinkedIn, or should we dive straight into the interview?",
+    text: "Hello! I'm here to help you build a profile that truly resonates. Let's dive into discovering your Ikigai through a conversational interview. Ready to begin?",
     type: "welcome",
-    options: ["Paste LinkedIn URL", "Start the Interview"]
+    options: ["Start the Interview"]
   },
   {
     id: "passion",
@@ -44,14 +45,13 @@ const IkigaiChat = () => {
   const [messages, setMessages] = useState([{ role: "ai", text: IKIGAI_QUESTIONS[0].text, options: IKIGAI_QUESTIONS[0].options }]);
   const [userInput, setUserInput] = useState("");
   const [ikigaiData, setIkigaiData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
     role_intent: "",
     skills: ""
   });
   const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -64,9 +64,7 @@ const IkigaiChat = () => {
 
   const handleOptionClick = (option) => {
     if (option === "Start the Interview") {
-      // Add user message
       setMessages(prev => [...prev, { role: "user", text: option }]);
-      // Move to first real question
       setTimeout(() => {
         setMessages(prev => [...prev, { role: "ai", text: IKIGAI_QUESTIONS[1].text }]);
         setCurrentStep(1);
@@ -79,10 +77,8 @@ const IkigaiChat = () => {
 
     const currentQuestion = IKIGAI_QUESTIONS[currentStep];
     
-    // Add user message
     setMessages(prev => [...prev, { role: "user", text: userInput }]);
     
-    // Save answer
     if (currentQuestion.field) {
       setIkigaiData(prev => ({
         ...prev,
@@ -92,14 +88,12 @@ const IkigaiChat = () => {
 
     setUserInput("");
 
-    // Move to next question or finish
     setTimeout(() => {
       if (currentStep < IKIGAI_QUESTIONS.length - 1) {
         const nextStep = currentStep + 1;
         setMessages(prev => [...prev, { role: "ai", text: IKIGAI_QUESTIONS[nextStep].text }]);
         setCurrentStep(nextStep);
       } else {
-        // Finished! Show form
         setMessages(prev => [...prev, { 
           role: "ai", 
           text: "Perfect! I've captured your Ikigai. Now let's complete your profile with a few more details." 
@@ -144,12 +138,11 @@ const IkigaiChat = () => {
   };
 
   const currentQuestionIndex = messages.filter(m => m.role === "ai").length;
-  const totalQuestions = IKIGAI_QUESTIONS.length - 1; // Exclude welcome message
+  const totalQuestions = IKIGAI_QUESTIONS.length - 1;
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,7 +152,6 @@ const IkigaiChat = () => {
           <p className="text-muted-foreground text-lg">Let our AI guide you to your perfect match.</p>
         </motion.div>
 
-        {/* Chat Container */}
         <div className="glass-card rounded-3xl p-8 mb-6 min-h-[500px] max-h-[600px] overflow-y-auto">
           <AnimatePresence>
             {messages.map((message, index) => (
@@ -171,28 +163,24 @@ const IkigaiChat = () => {
                 className={`mb-6 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  {/* Avatar */}
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.role === 'ai' ? 'bg-primary text-primary-foreground' : 'bg-muted'
                   }`}>
                     {message.role === 'ai' ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
                   </div>
                   
-                  {/* Message */}
                   <div>
                     <div className={message.role === 'ai' ? 'chat-message-ai' : 'chat-message-user'}>
                       <p className="leading-relaxed">{message.text}</p>
                     </div>
                     
-                    {/* Options */}
                     {message.options && (
                       <div className="flex gap-3 mt-3">
                         {message.options.map((option, idx) => (
                           <Button
                             key={idx}
                             onClick={() => handleOptionClick(option)}
-                            variant={idx === 1 ? "default" : "outline"}
-                            className="rounded-full"
+                            className="btn-primary"
                             data-testid={`option-${idx}`}
                           >
                             {option}
@@ -206,7 +194,6 @@ const IkigaiChat = () => {
             ))}
           </AnimatePresence>
           
-          {/* Form Section */}
           {showForm && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -275,23 +262,23 @@ const IkigaiChat = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
         {!showForm && currentStep > 0 && (
           <div className="flex gap-3 items-end">
             <div className="flex-1 relative">
-              <Input
+              <Textarea
                 data-testid="chat-input"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                 placeholder="Type your response here..."
-                className="pr-12 py-6 rounded-2xl bg-muted/50"
+                className="pr-12 py-4 rounded-2xl bg-muted/50 resize-none min-h-[60px]"
+                rows={2}
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={!userInput.trim()}
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary hover:bg-primary/90"
+                className="absolute right-2 bottom-2 rounded-full bg-primary hover:bg-primary/90"
                 data-testid="send-button"
               >
                 <ArrowUp className="w-5 h-5" />
@@ -300,7 +287,6 @@ const IkigaiChat = () => {
           </div>
         )}
 
-        {/* Progress Indicator */}
         {currentStep > 0 && !showForm && (
           <div className="mt-6 flex items-center justify-between">
             <div className="flex gap-2">
