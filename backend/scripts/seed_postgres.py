@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 import uuid
-from openai import OpenAI
+from emergentintegrations.llm.embeddings import create_embedding
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -18,9 +18,7 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / '.env')
 
 DATABASE_URL = os.environ['DATABASE_URL']
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 
 # Sample profiles for seeding
 SAMPLE_PROFILES = [
