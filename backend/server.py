@@ -16,7 +16,7 @@ import httpx
 import json
 import numpy as np
 from emergentintegrations.llm.chat import LlmChat, UserMessage
-from emergentintegrations.llm.embeddings import create_embedding
+import litellm
 import shutil
 
 ROOT_DIR = Path(__file__).parent
@@ -27,6 +27,10 @@ pg_pool: Optional[asyncpg.Pool] = None
 
 # Emergent LLM key for extraction, re-ranking, and embeddings
 EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
+
+# Set up litellm with Emergent proxy
+litellm.api_base = "https://ai.emergentmethods.ai"
+litellm.api_key = EMERGENT_LLM_KEY
 
 # PostgreSQL connection string
 DATABASE_URL = os.environ['DATABASE_URL']
