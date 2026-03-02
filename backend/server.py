@@ -651,11 +651,7 @@ async def search_profiles(request: SearchRequest, user: User = Depends(get_curre
     """Two-stage semantic search with pgvector + LLM re-ranking"""
     
     # Generate query embedding
-    embedding_response = litellm.embedding(
-        model="openai/text-embedding-3-small",
-        input=[request.query]
-    )
-    query_embedding = embedding_response.data[0]["embedding"]
+    query_embedding = create_embedding(request.query)
     
     pool = await get_db_pool()
     async with pool.acquire() as conn:
