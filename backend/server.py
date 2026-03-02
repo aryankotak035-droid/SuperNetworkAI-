@@ -15,7 +15,7 @@ from datetime import datetime, timezone, timedelta
 import httpx
 import json
 import numpy as np
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.chat import LlmChat, UserMessage, get_integration_proxy_url
 import litellm
 import shutil
 
@@ -29,7 +29,7 @@ pg_pool: Optional[asyncpg.Pool] = None
 EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 
 # Set up litellm with Emergent proxy
-litellm.api_base = "https://ai.emergentmethods.ai"
+litellm.api_base = get_integration_proxy_url()
 litellm.api_key = EMERGENT_LLM_KEY
 
 # PostgreSQL connection string
