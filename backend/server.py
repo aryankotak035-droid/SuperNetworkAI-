@@ -336,11 +336,7 @@ async def create_profile(request: ProfileCreate, user: User = Depends(get_curren
         
         # Generate embedding
         ikigai_text = f"Passion: {request.ikigai.passion}. Skills: {request.ikigai.skillset}. Mission: {request.ikigai.mission}. Working Style: {request.ikigai.working_style_availability}."
-        embedding_response = litellm.embedding(
-            model="openai/text-embedding-3-small",
-            input=[ikigai_text]
-        )
-        embedding = embedding_response.data[0]["embedding"]
+        embedding = create_embedding(ikigai_text)
         
         now = datetime.now(timezone.utc)
         
