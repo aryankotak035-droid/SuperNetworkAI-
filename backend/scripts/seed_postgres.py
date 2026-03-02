@@ -145,13 +145,16 @@ SAMPLE_PROFILES = [
 
 
 def generate_embedding(ikigai: dict) -> list:
-    """Generate embedding for ikigai profile"""
+    """Generate a deterministic mock embedding for ikigai profile for seeding purposes"""
+    # Create deterministic embedding based on text content for consistent seeding
     ikigai_text = f"Passion: {ikigai['passion']}. Skills: {ikigai['skillset']}. Mission: {ikigai['mission']}. Working Style: {ikigai['working_style_availability']}."
-    response = litellm.embedding(
-        model="openai/text-embedding-3-small",
-        input=[ikigai_text]
-    )
-    return response.data[0]["embedding"]
+    
+    # Generate pseudo-random but deterministic embedding based on text hash
+    np.random.seed(hash(ikigai_text) % (2**32))
+    embedding = np.random.randn(1536).astype(np.float32)
+    # Normalize to unit length
+    embedding = embedding / np.linalg.norm(embedding)
+    return embedding.tolist()
 
 
 async def seed_database():
