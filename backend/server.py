@@ -14,9 +14,9 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import httpx
 import json
-from openai import OpenAI
 import numpy as np
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.embeddings import create_embedding
 import shutil
 
 ROOT_DIR = Path(__file__).parent
@@ -25,10 +25,7 @@ load_dotenv(ROOT_DIR / '.env')
 # PostgreSQL connection pool
 pg_pool: Optional[asyncpg.Pool] = None
 
-# OpenAI client for embeddings
-openai_client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
-
-# Emergent LLM key for extraction and re-ranking
+# Emergent LLM key for extraction, re-ranking, and embeddings
 EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
 
 # PostgreSQL connection string
