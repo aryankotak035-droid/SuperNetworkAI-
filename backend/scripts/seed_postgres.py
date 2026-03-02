@@ -152,13 +152,11 @@ SAMPLE_PROFILES = [
 def generate_embedding(ikigai: dict) -> list:
     """Generate embedding for ikigai profile"""
     ikigai_text = f"Passion: {ikigai['passion']}. Skills: {ikigai['skillset']}. Mission: {ikigai['mission']}. Working Style: {ikigai['working_style_availability']}."
-    embedding = create_embedding(
-        api_key=EMERGENT_LLM_KEY,
-        text=ikigai_text,
-        provider="openai",
-        model="text-embedding-3-small"
+    response = litellm.embedding(
+        model="openai/text-embedding-3-small",
+        input=[ikigai_text]
     )
-    return embedding
+    return response.data[0]["embedding"]
 
 
 async def seed_database():
