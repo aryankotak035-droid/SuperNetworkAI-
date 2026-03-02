@@ -327,11 +327,12 @@ async def create_profile(request: ProfileCreate, user: User = Depends(get_curren
         
         # Generate embedding
         ikigai_text = f"Passion: {request.ikigai.passion}. Skills: {request.ikigai.skillset}. Mission: {request.ikigai.mission}. Working Style: {request.ikigai.working_style_availability}."
-        embedding_response = openai_client.embeddings.create(
-            model="text-embedding-3-small",
-            input=ikigai_text
+        embedding = create_embedding(
+            api_key=EMERGENT_LLM_KEY,
+            text=ikigai_text,
+            provider="openai",
+            model="text-embedding-3-small"
         )
-        embedding = embedding_response.data[0].embedding
         
         now = datetime.now(timezone.utc)
         
