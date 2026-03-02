@@ -9,8 +9,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 import uuid
-import litellm
-from emergentintegrations.llm.chat import get_integration_proxy_url
+import numpy as np
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -19,11 +18,6 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / '.env')
 
 DATABASE_URL = os.environ['DATABASE_URL']
-EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
-
-# Set up litellm with Emergent proxy
-litellm.api_base = get_integration_proxy_url()
-litellm.api_key = EMERGENT_LLM_KEY
 
 # Sample profiles for seeding
 SAMPLE_PROFILES = [
